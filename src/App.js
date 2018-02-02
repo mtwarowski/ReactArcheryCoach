@@ -3,59 +3,38 @@ import logo from './logo.svg';
 import './App.css';
 import { auth, provider } from './firebase.js';
 import axios from 'axios';
+import Login from './Login.js'
+
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       user: null,
-      practices: [{
-      id: 1,
-      name: 'richmondPractice',
-      comment: 'Elbow to low',
-      totalValue: 200,
-      practiceDateTimeStamp: 500000
-    }]};
-
-    this.login = this.login.bind(this); // <-- add this line
-    this.logout = this.logout.bind(this); // <-- add this line
+      practices: [
+    //     {
+    //   id: 1,
+    //   name: 'richmondPractice',
+    //   comment: 'Elbow to low',
+    //   totalValue: 200,
+    //   practiceDateTimeStamp: 500000
+    // }
+  ]};
   }
-
-  logout() {
-    auth.signOut()
-    .then(() => {
-      this.setState({
-        user: null,
-        practices: []
-      });
+  
+  handleUserDataChange(userData){
+    this.setState({
+      user: userData.user,
+      token: userData.token
     });
+    this.getAllPractices(this.state.token);
   }
-
-  login() {
-    auth.signInWithPopup(provider) 
-      .then((result) => {
-        const user = result.user;
-        this.setState({
-          user: user,
-          practices: []
-        });
-
-        user.getToken().then((token) => { 
-          this.getAllPractices(token);
-        });
-      });
-  }
-
-  // {headers.append(}'Accept', 'application/json');
-  // headers.append('Access-Control-Allow-Origin', 'http://localhost:4200');
-  // headers.append("Authorization", "Bearer " + token);
-
 
   getAllPractices(token){
     axios.get(`http://localhost:56617/api/practice`, {
       headers: {
         Accept: 'application/json',
-        'Access-Control-Allow-Origin': '*', //'http://localhost:4200',
+        'Access-Control-Allow-Origin': '*',
         Authorization: 'Bearer ' + token
       }
     })
@@ -65,6 +44,11 @@ class App extends Component {
     });
   }
 
+  componentDidMount() {
+    if(this.state.token){
+      this.getAllPractices(this.state.token);
+    }
+  }
 
   render() {
     return (
@@ -74,14 +58,9 @@ class App extends Component {
           <h1 className="App-title">Welcome to React</h1>
         </header>
         <div>
-        <div className='container'>
-        {
-          this.state.user ?
-          <button onClick={this.logout}>Log Out</button>                
-          :
-          <button onClick={this.login}>Log In</button>              
-        }
-        </div>
+        <div>{this.state.user ? this.state.user.displayName : ""}</div>
+        <div>{this.state.token}</div>
+        <Login handleUserDataChange={this.handleUserDataChange.bind(this)} />
           
           {this.state.practices.map((practice, index) => (
               <div key={practice.id}><span>{practice.name} {practice.practiceDateTimeStamp}</span></div>
