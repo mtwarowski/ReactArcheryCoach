@@ -1,16 +1,32 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { auth, provider } from './firebase.js';
 import axios from 'axios';
 import Login from './Login.js'
+import PaginationBar from './PaginationBar.js'
+import AddPracticeForm from './Practicing/AddPracticeForm.js'
 
-
+const practiceApiBaseUrl = "http://localhost:56617/";
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       user: null,
+      pageSize: 2,
+      pageNumber: 1,
+      itemCount: null,
+      pagingButtons: [{
+        displayValue: "1",
+        pageNumber: 1
+      },
+      {
+        displayValue: "2",
+        pageNumber: 2
+      },
+      {
+        displayValue: ">",
+        pageNumber: 3
+      }],
       practices: [
     //     {
     //   id: 1,
@@ -19,7 +35,8 @@ class App extends Component {
     //   totalValue: 200,
     //   practiceDateTimeStamp: 500000
     // }
-  ]};
+              ],
+            };
   }
   
   handleUserDataChange(userData){
@@ -31,7 +48,10 @@ class App extends Component {
   }
 
   getAllPractices(token){
-    axios.get(`http://localhost:56617/api/practice`, {
+
+    var queryString = practiceApiBaseUrl + 'api/practice/pagination?pageNumber=' + this.state.pageNumber + '&pageSize=' + this.state.pageSize
+
+    axios.get(queryString, {
       headers: {
         Accept: 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -39,8 +59,13 @@ class App extends Component {
       }
     })
     .then(res => {
-      const testPractice = res.data;
-      this.setState({ practices: testPractice });
+      const pagingResult = res.data;
+      this.setState({ 
+        itemCount: pagingResult.itemCount,
+        pageNumber: pagingResult.pageNumber,
+        pageSize: pagingResult.pageSize,
+        practices: pagingResult.data 
+      });
     });
   }
 
@@ -48,6 +73,11 @@ class App extends Component {
     if(this.state.token){
       this.getAllPractices(this.state.token);
     }
+  }
+
+  handleSelectedPageChanged(pageNumber){
+    this.setState({ pageNumber: pageNumber }, 
+      () => { this.getAllPractices(this.state.token) });
   }
 
   render() {
@@ -61,10 +91,12 @@ class App extends Component {
         <div>{this.state.user ? this.state.user.displayName : ""}</div>
         <div>{this.state.token}</div>
         <Login handleUserDataChange={this.handleUserDataChange.bind(this)} />
-          
-          {this.state.practices.map((practice, index) => (
-              <div key={practice.id}><span>{practice.name} {practice.practiceDateTimeStamp}</span></div>
-          ))}
+        <AddPracticeForm />
+
+        {this.state.practices.map((practice, index) => (
+            <div key={practice.id}><span>{practice.name} {practice.practiceDateTimeStamp}</span></div>
+        ))}
+        <PaginationBar pageNumber={this.state.pageNumber} pageSize={this.state.pageSize} itemCount={this.state.itemCount} handleSelectedPageChanged={this.handleSelectedPageChanged.bind(this)} />
         </div>
       </div>
     );
