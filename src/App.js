@@ -5,6 +5,7 @@ import axios from 'axios';
 import Login from './Login.js'
 import PaginationBar from './PaginationBar.js'
 import AddPracticeForm from './Practicing/AddPracticeForm.js'
+import Bows from './Equipment/bows.js'
 
 const practiceApiBaseUrl = "http://localhost:56617/";
 class App extends Component {
@@ -38,13 +39,32 @@ class App extends Component {
               ],
             };
   }
-  
+
   handleUserDataChange(userData){
     this.setState({
       user: userData.user,
       token: userData.token
     });
     this.getAllPractices(this.state.token);
+  }
+
+  handlePracticeDelete(practiceId){
+    if(!practiceId){
+      return;
+    }
+
+    var queryString = practiceApiBaseUrl + 'api/practice/' + practiceId;
+    
+    axios.delete(queryString, {
+      headers: {
+        Accept: 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        Authorization: 'Bearer ' + this.state.token
+      }
+    })
+    .then(res => {
+      this.getAllPractices(this.state.token);
+    });
   }
 
   getAllPractices(token){
@@ -91,12 +111,13 @@ class App extends Component {
         <div>{this.state.user ? this.state.user.displayName : ""}</div>
         <div>{this.state.token}</div>
         <Login handleUserDataChange={this.handleUserDataChange.bind(this)} />
-        <AddPracticeForm />
+        <AddPracticeForm token={this.state.token}/>
 
         {this.state.practices.map((practice, index) => (
-            <div key={practice.id}><span>{practice.name} {practice.practiceDateTimeStamp}</span></div>
+            <div key={practice.id}><span>{practice.name} {practice.practiceDateTimeStamp}</span><button onClick={() => this.handlePracticeDelete(practice.id)}>Delete</button></div>
         ))}
         <PaginationBar pageNumber={this.state.pageNumber} pageSize={this.state.pageSize} itemCount={this.state.itemCount} handleSelectedPageChanged={this.handleSelectedPageChanged.bind(this)} />
+        <Bows user={this.state.user}/>
         </div>
       </div>
     );

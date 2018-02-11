@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
+const practiceApiBaseUrl = "http://localhost:56617/";
 class AddPracticeForm extends Component {
   constructor(props) {
     super(props);
@@ -7,7 +9,8 @@ class AddPracticeForm extends Component {
       practiceName: '',
       practiceDate: '',
       practiceComment: '',
-      practiceRounds: []
+      practiceRounds: [], //[{numberOfRound, numberOfTimesPairRound}]
+      userToken: props.token
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -21,6 +24,35 @@ class AddPracticeForm extends Component {
   handleSubmit(event) {
     alert('A name was submitted: ' + this.state.practiceName  + ' ' + this.state.practiceDate + ' ' + this.state.practiceComment );
     event.preventDefault();
+    
+    axios.post(practiceApiBaseUrl + 'api/practice/', {
+      name: this.state.practiceName,
+      comment: this.state.practiceComment,
+      practiceDateTimeStamp: this.state.practiceDate,
+      practiceRounds: this.state.practiceRounds,
+      totalValue: this.getTotalValue()      
+    },
+    {
+      headers: {
+        Accept: 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        Authorization: 'Bearer ' + this.props.token
+      }
+    })
+    .then(function (response) {
+    });
+    // .catch(function (error) {
+    // });
+  }
+
+
+  getTotalValue(){
+    let total = 0;
+
+    this.state.practiceRounds.forEach((practiceRound) => {
+      total += (practiceRound.numberOfRound * practiceRound.numberOfTimesPairRound);
+    });
+    return total;
   }
   
   handlePracticeCommentChange(event) {    
