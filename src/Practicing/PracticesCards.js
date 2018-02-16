@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import HttpHelpers from '../Auth/HttpHelpers'
+import Config from '../Config'
 
-const practiceApiBaseUrl = "http://localhost:56617/";
 class PracticesCards extends Component {
     constructor(props) {
       super(props);
@@ -10,6 +10,8 @@ class PracticesCards extends Component {
         practices: null,
         handleItemNumberChanged: props.handleItemNumberChanged
       };
+
+      this.practiceApiBaseUrl = new Config().PracticeApiBaseUrl;
     }  
   
     componentDidMount() {
@@ -25,7 +27,7 @@ class PracticesCards extends Component {
     }  
   
     getAllPractices(pageNumber, pageSize){  
-      var queryString = practiceApiBaseUrl + 'api/practice/pagination?pageNumber=' + pageNumber + '&pageSize=' + pageSize
+      var queryString = this.practiceApiBaseUrl + 'api/practice/pagination?pageNumber=' + pageNumber + '&pageSize=' + pageSize
   
       axios.get(queryString, {
         headers: HttpHelpers.getHttpHeaders()
@@ -44,7 +46,7 @@ class PracticesCards extends Component {
         return;
       }
   
-      var queryString = practiceApiBaseUrl + 'api/practice/' + practiceId;
+      var queryString = this.practiceApiBaseUrl + 'api/practice/' + practiceId;
       
       axios.delete(queryString, {
         headers: HttpHelpers.getHttpHeaders()

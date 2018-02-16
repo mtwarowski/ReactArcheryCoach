@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import HttpHelpers from '../Auth/HttpHelpers';
+import Config from '../Config'
 
-
-const practiceApiBaseUrl = "http://localhost:56617/";
 class AddPracticeForm extends Component {
   constructor(props) {
     super(props);
@@ -14,6 +13,7 @@ class AddPracticeForm extends Component {
       practiceRounds: [], //[{numberOfRound, numberOfTimesPairRound}]
     };
 
+    this.practiceApiBaseUrl = new Config().PracticeApiBaseUrl;
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePracticeCommentChange = this.handlePracticeCommentChange.bind(this);
@@ -27,7 +27,7 @@ class AddPracticeForm extends Component {
     alert('A name was submitted: ' + this.state.practiceName  + ' ' + this.state.practiceDate + ' ' + this.state.practiceComment );
     event.preventDefault();
     
-    axios.post(practiceApiBaseUrl + 'api/practice/', {
+    axios.post(this.practiceApiBaseUrl + 'api/practice/', {
       name: this.state.practiceName,
       comment: this.state.practiceComment,
       practiceDateTimeStamp: this.state.practiceDate,
