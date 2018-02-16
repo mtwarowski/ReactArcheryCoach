@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import HttpHelpers from '../Auth/HttpHelpers';
+
 
 const practiceApiBaseUrl = "http://localhost:56617/";
 class AddPracticeForm extends Component {
@@ -10,8 +12,8 @@ class AddPracticeForm extends Component {
       practiceDate: '',
       practiceComment: '',
       practiceRounds: [], //[{numberOfRound, numberOfTimesPairRound}]
-      userToken: props.token
     };
+
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePracticeCommentChange = this.handlePracticeCommentChange.bind(this);
@@ -30,21 +32,20 @@ class AddPracticeForm extends Component {
       comment: this.state.practiceComment,
       practiceDateTimeStamp: this.state.practiceDate,
       practiceRounds: this.state.practiceRounds,
-      totalValue: this.getTotalValue()      
-    },
-    {
-      headers: {
-        Accept: 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        Authorization: 'Bearer ' + this.props.token
-      }
-    })
-    .then(function (response) {
+      totalValue: this.getTotalValue()
+    }, { 
+      headers: HttpHelpers.getHttpHeaders() 
+    }).then((response) => {
+      this.setState({
+          practiceName: '',
+          practiceDate: '',
+          practiceComment: '',
+          practiceRounds: [], //[{numberOfRound, numberOfTimesPairRound}]
+        });
     });
     // .catch(function (error) {
     // });
   }
-
 
   getTotalValue(){
     let total = 0;
@@ -95,7 +96,7 @@ class AddPracticeForm extends Component {
           <input placeholder="Practice name" name="PracticeName" value={this.state.practiceName} onChange={(event) => this.setState({ practiceName: event.target.value })} />
         </div>
         <div>
-          <input placeholder="Choose a date" name="PracticeDate" value={this.state.practiceDate} onChange={(event) => this.setState({ practiceDate: event.target.value })} />
+          <input placeholder="Choose a date" name="PracticeDate" type="number" value={this.state.practiceDate} onChange={(event) => this.setState({ practiceDate: event.target.value })} />
         </div>
         <div>
           <textarea placeholder="Practice comment" name="PracticeComment" value={this.state.practiceComment} onChange={this.handlePracticeCommentChange} />

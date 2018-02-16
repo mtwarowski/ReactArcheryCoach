@@ -1,127 +1,59 @@
-import React, { Component } from 'react';
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import axios from 'axios';
-import Login from './Login.js'
-import PaginationBar from './PaginationBar.js'
-import AddPracticeForm from './Practicing/AddPracticeForm.js'
-import Bows from './Equipment/bows.js'
+import { Switch, Route, Link, Redirect } from 'react-router-dom';
+import Login from './Login'
 
-const practiceApiBaseUrl = "http://localhost:56617/";
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      user: null,
-      pageSize: 2,
-      pageNumber: 1,
-      itemCount: null,
-      pagingButtons: [{
-        displayValue: "1",
-        pageNumber: 1
-      },
-      {
-        displayValue: "2",
-        pageNumber: 2
-      },
-      {
-        displayValue: ">",
-        pageNumber: 3
-      }],
-      practices: [
-    //     {
-    //   id: 1,
-    //   name: 'richmondPractice',
-    //   comment: 'Elbow to low',
-    //   totalValue: 200,
-    //   practiceDateTimeStamp: 500000
-    // }
-              ],
-            };
-  }
+import Bows from './Equipment/Bows'
+import PracticesPage from './Practicing/PracticesPage'
+import AuthService from './Auth/AuthService'
 
-  handleUserDataChange(userData){
-    this.setState({
-      user: userData.user,
-      token: userData.token
-    });
-    this.getAllPractices(this.state.token);
-  }
+const Home = () => (
+  <div className="App">
+    <header className="App-header">
+      <img src={logo} className="App-logo" alt="logo" />
+      <h1 className="App-title">Welcome to React</h1>
+    </header>
+  </div>
+)
 
-  handlePracticeDelete(practiceId){
-    if(!practiceId){
-      return;
-    }
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={(props) => (
+    new AuthService().loggedIn() === true
+      ? <Component {...props} />
+      : <Redirect to='/login' />
+  )} />
+)
 
-    var queryString = practiceApiBaseUrl + 'api/practice/' + practiceId;
-    
-    axios.delete(queryString, {
-      headers: {
-        Accept: 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        Authorization: 'Bearer ' + this.state.token
-      }
-    })
-    .then(res => {
-      this.getAllPractices(this.state.token);
-    });
-  }
+const Main = () => (
+  <main>
+    <Switch>
+      <Route exact path='/' component={Home} />
+      <PrivateRoute path='/Practices' component={PracticesPage} />
+      <PrivateRoute path='/Bows' component={Bows} />
+    </Switch>
+  </main>
+)
 
-  getAllPractices(token){
+const Header = () => (
 
-    var queryString = practiceApiBaseUrl + 'api/practice/pagination?pageNumber=' + this.state.pageNumber + '&pageSize=' + this.state.pageSize
+  <header>
+    <nav>
+      <ul>
+        <li><Link to='/'>Home</Link></li>
+        <li><Link to='/Practices'>PracticesPage</Link></li>
+        <li><Link to='/Bows'>Bows</Link></li>
+      </ul>
+    </nav>
+    <Login />
+  </header>
+)
 
-    axios.get(queryString, {
-      headers: {
-        Accept: 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        Authorization: 'Bearer ' + token
-      }
-    })
-    .then(res => {
-      const pagingResult = res.data;
-      this.setState({ 
-        itemCount: pagingResult.itemCount,
-        pageNumber: pagingResult.pageNumber,
-        pageSize: pagingResult.pageSize,
-        practices: pagingResult.data 
-      });
-    });
-  }
-
-  componentDidMount() {
-    if(this.state.token){
-      this.getAllPractices(this.state.token);
-    }
-  }
-
-  handleSelectedPageChanged(pageNumber){
-    this.setState({ pageNumber: pageNumber }, 
-      () => { this.getAllPractices(this.state.token) });
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <div>
-        <div>{this.state.user ? this.state.user.displayName : ""}</div>
-        <div>{this.state.token}</div>
-        <Login handleUserDataChange={this.handleUserDataChange.bind(this)} />
-        <AddPracticeForm token={this.state.token}/>
-
-        {this.state.practices.map((practice, index) => (
-            <div key={practice.id}><span>{practice.name} {practice.practiceDateTimeStamp}</span><button onClick={() => this.handlePracticeDelete(practice.id)}>Delete</button></div>
-        ))}
-        <PaginationBar pageNumber={this.state.pageNumber} pageSize={this.state.pageSize} itemCount={this.state.itemCount} handleSelectedPageChanged={this.handleSelectedPageChanged.bind(this)} />
-        <Bows user={this.state.user}/>
-        </div>
-      </div>
-    );
-  }
-}
+const App = () => (
+  <div>
+    <Header />
+    <Main />
+  </div>
+)
 
 export default App;

@@ -1,52 +1,44 @@
 import React, { Component } from 'react';
-import { auth, provider } from './firebase.js';
-
+import AuthService from './Auth/AuthService';
 
 class Login extends Component {
   constructor(props) {
     super(props);    
-    
-    this.state = {
-      user: null,
-      token: null,
-      handleUserDataChange: this.props.handleUserDataChange
-    };
+    this.state = { isUserLoggedIn: false };
+    // this.state = {
+    //   user: null,
+    //   token: null,
+    //   handleUserDataChange: this.props.handleUserDataChange
+    // };
 
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.auth = new AuthService();
   }
-
-  logout() {
-    auth.signOut()
-    .then(() => {
-      this.setState({
-        user: null
-      });
+  
+  componentDidMount() {
+    this.setState({ 
+      isUserLoggedIn: this.auth.loggedIn()
+    });    
+  }
+  
+  login() {
+    this.auth.loginWithGoogle().then((result) => {
+      const user =  result.user;
+      this.setState({ isUserLoggedIn: user != null });
     });
   }
 
-  login() {
-    auth.signInWithPopup(provider) 
-      .then((result) => {
-        const user = result.user;
-        this.setState({
-          user: user
-        });
-
-        user.getIdToken().then((token) => {
-          this.setState({
-            token: token
-          });
-          this.state.handleUserDataChange({user: this.state.user, token: this.state.token});
-        });
-      });
+  logout() {
+    this.auth.logout();      
+    this.setState({ isUserLoggedIn: false });
   }
   
   render() {
     return (
       <div>
       {
-        this.state.user ?
+        this.state.isUserLoggedIn ?
         <button onClick={this.logout}>Log Out</button>                
         :
         <button onClick={this.login}>Log In</button>              
