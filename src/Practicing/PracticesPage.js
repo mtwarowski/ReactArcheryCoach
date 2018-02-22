@@ -1,36 +1,16 @@
-import React, { Component } from 'react';
-import PaginationBar from '../PaginationBar.js'
+import React from 'react';
+import { Switch } from 'react-router-dom';
+
+import PrivateRoute from '../Layout/PrivateRoute';
+
 import AddPracticeForm from './AddPracticeForm.js'
-import PracticesCards from './PracticesCards'
+import Practices from './Practices'
 
-class PracticesPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      pageSize: 10,
-      pageNumber: 1,
-      itemCount: null,
-    };
-  }
-
-
-  handleSelectedPageChanged(pageNumber){
-    this.setState({ pageNumber: pageNumber });
-  }
-
-  handleItemNumberChanged(itemCount){
-    this.setState({ itemCount: itemCount });
-  }
-
-  render() {
-    return (
-      <div className="Practices">
-        <AddPracticeForm />
-        <PracticesCards  pageNumber={this.state.pageNumber} pageSize={this.state.pageSize} handleItemNumberChanged={this.handleItemNumberChanged.bind(this)}  />
-        <PaginationBar pageNumber={this.state.pageNumber} pageSize={this.state.pageSize} itemCount={this.state.itemCount} handleSelectedPageChanged={this.handleSelectedPageChanged.bind(this)} />
-    </div>
-    );
-  }
-}
+const PracticesPage = () => (
+    <Switch>
+      <PrivateRoute exact path='/practices/' component={Practices} />
+      <PrivateRoute path='/practices/New' component={AddPracticeForm} />
+    </Switch>
+)
 
 export default PracticesPage;

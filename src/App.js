@@ -1,59 +1,67 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
-import { Switch, Route, Link, Redirect } from 'react-router-dom';
-import Login from './Login'
 
-import Bows from './Equipment/Bows'
-import PracticesPage from './Practicing/PracticesPage'
-import AuthService from './Auth/AuthService'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-const Home = () => (
-  <div className="App">
-    <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo" />
-      <h1 className="App-title">Welcome to React</h1>
-    </header>
-  </div>
-)
+import {LARGE, SMALL} from 'material-ui/utils/withWidth';
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={(props) => (
-    new AuthService().loggedIn() === true
-      ? <Component {...props} />
-      : <Redirect to='/login' />
-  )} />
-)
 
-const Main = () => (
-  <main>
-    <Switch>
-      <Route exact path='/' component={Home} />
-      <PrivateRoute path='/Practices' component={PracticesPage} />
-      <PrivateRoute path='/Bows' component={Bows} />
-    </Switch>
-  </main>
-)
+import ThemeDefault from './theme-default';
 
-const Header = () => (
+import LeftDrawer from './Layout/LeftDrawer';
+import Header from './Layout/Header';
+import Main from './Layout/Main';
 
-  <header>
-    <nav>
-      <ul>
-        <li><Link to='/'>Home</Link></li>
-        <li><Link to='/Practices'>PracticesPage</Link></li>
-        <li><Link to='/Bows'>Bows</Link></li>
-      </ul>
-    </nav>
-    <Login />
-  </header>
-)
+export class App extends Component {
 
-const App = () => (
-  <div>
-    <Header />
-    <Main />
-  </div>
-)
+  constructor(props) {
+    super(props);
+    this.state = {
+      navDrawerOpen: false
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.width !== nextProps.width) {
+      this.setState({navDrawerOpen: nextProps.width === LARGE});
+    }
+  }
+
+
+  handleChangeRequestNavDrawer() {
+    this.setState({
+      navDrawerOpen: !this.state.navDrawerOpen
+    });
+  }
+
+  render() {
+
+    let { navDrawerOpen } = this.state;
+    const paddingLeftDrawerOpen = 236;
+
+    const styles = {
+      header: {
+        paddingLeft: navDrawerOpen ? paddingLeftDrawerOpen : 0
+      },
+      container: {
+        margin: '80px 20px 20px 15px',
+        paddingLeft: navDrawerOpen && this.props.width !== SMALL ? paddingLeftDrawerOpen : 0
+      }
+    };
+
+    return (
+      <MuiThemeProvider muiTheme={ThemeDefault}>
+        <div>
+          <Header styles={styles.header} 
+                  handleChangeRequestNavDrawer={this.handleChangeRequestNavDrawer.bind(this)}/>
+          <LeftDrawer navDrawerOpen={navDrawerOpen} />
+
+          <div style={styles.container}>
+            <Main />
+          </div>
+        </div>
+      </MuiThemeProvider>);
+  }
+}
 
 export default App;

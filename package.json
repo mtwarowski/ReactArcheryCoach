@@ -5,7 +5,9 @@
   "dependencies": {
     "axios": "^0.17.1",
     "firebase": "^4.9.1",
+    "font-awesome": "^4.7.0",
     "jwt-decode": "^2.2.0",
+    "material-ui": "^0.20.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2",

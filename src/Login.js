@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
 import AuthService from './Auth/AuthService';
+import FlatButton from 'material-ui/FlatButton';
 
 class Login extends Component {
   constructor(props) {
     super(props);    
     this.state = { isUserLoggedIn: false };
-    // this.state = {
-    //   user: null,
-    //   token: null,
-    //   handleUserDataChange: this.props.handleUserDataChange
-    // };
+
 
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
@@ -36,14 +33,10 @@ class Login extends Component {
   
   render() {
     return (
-      <div>
-      {
         this.state.isUserLoggedIn ?
-        <button onClick={this.logout}>Log Out</button>                
+        <FlatButton onClick={this.logout}>Log Out</FlatButton>                
         :
-        <button onClick={this.login}>Log In</button>              
-      }
-      </div>
+        <FlatButton onClick={this.login}>Log In</FlatButton>
     );
   }
 }
