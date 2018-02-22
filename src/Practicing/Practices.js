@@ -12,7 +12,7 @@ class Practices extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pageSize: 2,
+      pageSize: 10,
       pageNumber: 1,
       itemCount: null,
     };

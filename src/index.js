@@ -5,6 +5,7 @@ import './styles.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import 'font-awesome/css/font-awesome.css';
+import 'flexboxgrid/css/flexboxgrid.css';
 
 ReactDOM.render((
     <BrowserRouter>
