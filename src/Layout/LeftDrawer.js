@@ -3,8 +3,14 @@ import Drawer from 'material-ui/Drawer';
 import { spacing, typography } from 'material-ui/styles';
 import { white, blue600 } from 'material-ui/styles/colors';
 import MenuItem from 'material-ui/MenuItem';
-import { Switch, Route, Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Avatar from 'material-ui/Avatar';
+
+import Assessment from 'material-ui/svg-icons/action/assessment';
+import Web from 'material-ui/svg-icons/av/web';
+// import PermIdentity from 'material-ui/svg-icons/action/perm-identity';
+// import ExpandLess from 'material-ui/svg-icons/navigation/expand-less';
+// import ExpandMore from 'material-ui/svg-icons/navigation/expand-more';
 
 const LeftDrawer = (props) => {
     let { navDrawerOpen } = props;
@@ -45,7 +51,14 @@ const LeftDrawer = (props) => {
         }
     };
 
+    const menus = [
+        { text: 'Practices', icon: <Assessment/>, link: '/practices' },
+        { text: 'Bows', icon: <Web/>, link: '/bows' },
+        // { text: 'Table Page', icon: <GridOn/>, link: '/table' },
+        // { text: 'Login Page', icon: <PermIdentity/>, link: '/login' }
+      ];
     return (
+
         <Drawer
             docked={true}
             open={navDrawerOpen}>
@@ -59,7 +72,7 @@ const LeftDrawer = (props) => {
                 <span style={styles.avatar.span}>{props.username}</span>
             </div>
             <div>
-                {/* {props.menus.map((menu, index) =>
+            {menus.map((menu, index) =>
               <MenuItem
                 key={index}
                 style={styles.menuItem}
@@ -67,7 +80,7 @@ const LeftDrawer = (props) => {
                 leftIcon={menu.icon}
                 containerElement={<Link to={menu.link}/>}
               />
-            )} */}
+            )}
             </div>
         </Drawer>
     );

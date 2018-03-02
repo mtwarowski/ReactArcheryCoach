@@ -29,7 +29,7 @@ class AddPracticeForm extends Component {
   }
 
   handleSubmit(event) {
-    alert('A name was submitted: ' + this.state.practiceName + ' ' + this.state.practiceDate + ' ' + this.state.practiceComment);
+    // alert('A name was submitted: ' + this.state.practiceName + ' ' + this.state.practiceDate + ' ' + this.state.practiceComment);
     event.preventDefault();
 
     axios.post(this.practiceApiBaseUrl + 'api/practice/', {

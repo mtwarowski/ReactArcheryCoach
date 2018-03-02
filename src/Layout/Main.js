@@ -6,13 +6,14 @@ import PrivateRoute from './PrivateRoute';
 import Dashboard from '../Dashboard';
 import Bows from '../Equipment/Bows';
 import PracticesPage from '../Practicing/PracticesPage';
+import EquipmentPage from '../Equipment/EquipmentPage';
 
 const Main = () => (
     <main>
         <Switch>
             <Route exact path='/' component={Dashboard} />
-            <PrivateRoute path='/Practices' component={PracticesPage} />
-            <PrivateRoute path='/Bows' component={Bows} />
+            <PrivateRoute path='/practices' component={PracticesPage} />
+            <PrivateRoute path='/bows' component={EquipmentPage} />
         </Switch>
     </main>
 )

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { database, auth } from '../Auth/firebase.js';
+import { database } from '../Auth/firebase.js';
+import AuthService from '../Auth/AuthService';
 
 class Bows extends Component {
   constructor(props) {
@@ -10,12 +11,14 @@ class Bows extends Component {
       bows: null,
       handleUserDataChange: this.props.handleUserDataChange
     };
+
+    this.authService = new AuthService();
   }
 
   componentDidMount() {
-    var user = auth.currentUser;
-    if (!this.state.bows && user) {
-      const itemsRef = database.ref('userData/' + user.uid + '/bows');
+    var userId = this.authService.getUserId();
+    if (!this.state.bows && userId) {
+      const itemsRef = database.ref('userData/' + userId + '/bows');
       itemsRef.on('value', (snapshot) => {
           let bows = snapshot.val();
           let newState = [];
@@ -30,13 +33,12 @@ class Bows extends Component {
       });
   
       }
-  }
-  
+  }  
  
   componentDidUpdate(prevProps, prevState) {
-    var user = auth.currentUser;
-    if (user && !this.state.bows) {
-    const itemsRef = database.ref('userData/' + user.uid + '/bows');
+    var userId = this.authService.getUserId();
+    if (!this.state.bows && userId) {
+    const itemsRef = database.ref('userData/' + userId + '/bows');
     itemsRef.on('value', (snapshot) => {
         let bows = snapshot.val();
         let newState = [];
@@ -52,8 +54,6 @@ class Bows extends Component {
 
     }
   }
-
-
   
   render() {
     return (
@@ -61,7 +61,7 @@ class Bows extends Component {
         {
           this.state.bows ? 
           this.state.bows.map((bow, index) => (
-            <div key={index}>{bow.brand}</div>
+            <div key={index}><div>{bow.name}</div><div>{bow.brand}</div></div>
         )) : <div>No data</div>
         }
       </div>
@@ -70,3 +70,13 @@ class Bows extends Component {
 }
 export default Bows;
 
+    // name: string;
+    // brand: string;
+    // size: number;
+    // description: string;
+    // sightMarks: BowSightMark[];
+    // bowType: string;
+
+    // drawWeight: number;
+    // braceHeight: string;
+    // bowString: string;
