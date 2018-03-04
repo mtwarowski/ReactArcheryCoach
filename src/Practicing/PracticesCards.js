@@ -76,7 +76,7 @@ class PracticesCards extends Component {
       <div style={styles.cardContainer} className="row">
         {!this.state.practices ? <div>Unable to load practices.</div>
           : this.state.practices.map((practice, index) => (
-            <div className="col-xs-12 col-sm-6 col-md-4 col-lg-2">
+            <div key={practice.id} className="col-xs-12 col-sm-6 col-md-4 col-lg-2">
               <Card style={styles.card}>
                 <CardHeader
                   title={practice.name}
@@ -86,7 +86,7 @@ class PracticesCards extends Component {
                   }
                 />
                 <CardText>
-                  <div key={practice.id}><span>{practice.name} {practice.practiceDateTimeStamp}</span></div>
+                  <div><span>{practice.name} {practice.practiceDateTimeStamp}</span></div>
                 </CardText>
                 <CardActions>
                   <IconButton onClick={() => this.handlePracticeDelete(practice.id)}><Delete /></IconButton>

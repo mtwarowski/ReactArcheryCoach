@@ -13,70 +13,7 @@ import Avatar from 'material-ui/Avatar';
 import firebase, { database } from '../Auth/firebase.js';
 import AuthService from '../Auth/AuthService';
 
-
-class MultiRowSelector extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = { rows: [] };
-        this.handleAddNewRow = this.handleAddNewRow.bind(this);
-        this.handleAddNewRow = this.handleAddNewRow.bind(this);
-        this.handleLabelChange = this.handleLabelChange.bind(this);
-        this.handleValueChange = this.handleValueChange.bind(this);
-    }
-
-    handleAddNewRow() {
-        let rows = this.state.rows;
-        rows.push({ label: '', value: '' });
-        this.setState({ rows: rows });
-        this.handleRowsChanges(rows);
-    }
-
-    handleDeleteRow(event, index) {
-        event.preventDefault();
-        var row = this.state.rows[index];
-        var rows = this.state.rows.filter((value) => value !== row);
-        this.setState({ rows: rows });
-        this.handleRowsChanges(rows);
-    }
-
-    handleLabelChange(event, index) {
-        var rows = this.state.rows;
-        rows[index].label = event.target.value;
-        this.setState({ rows: rows });
-        this.handleRowsChanges(rows);
-    }
-
-    handleValueChange(event, index) {
-        var rows = this.state.rows;
-        rows[index].value = event.target.value;
-        this.setState({ rows: rows });
-        this.handleRowsChanges(rows);
-    }
-
-    handleRowsChanges(rows){
-        this.props.handleRowsChanges(rows);
-    }
-
-    render(){
-        const props = this.props;
-        return (
-            <div>
-            <FlatButton onClick={this.handleAddNewRow} fullWidth={true}>{props.buttonName}</FlatButton>
-            {props.rows.map((row, index) => (
-                <div key={index}>
-                    <TextField placeholder={props.label} type="number" value={row.label} onChange={(event) => this.handleLabelChange(event, index)} />
-                    <span> {props.separatorText} </span>
-                    <TextField placeholder={props.value} type="number" value={row.value} onChange={(event) => this.handleValueChange(event, index)} />
-                    <FlatButton onClick={(event) => this.handleDeleteRow(event, index)}>remove</FlatButton>
-                    <hr />
-                </div>))}
-            </div>
-        );
-    }
-}
-
-class AddBowForm extends Component {
+class AddArrowForm extends Component {
 
     constructor(props) {
         super(props);
@@ -103,9 +40,7 @@ class AddBowForm extends Component {
                 { no: 4, primaryText: 'Long Bow' },
                 { no: 5, primaryText: 'Hourse Bow' },
                 { no: 6, primaryText: 'Yumi' }
-            ],
-
-            sightMarkRows: []            
+            ]
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -113,13 +48,7 @@ class AddBowForm extends Component {
         this.handleAddNewSightMarks = this.handleAddNewSightMarks.bind(this);
         this.handleSelectedBowTypeChange = this.handleSelectedBowTypeChange.bind(this);
 
-        this.handleSightMarkRowsChanges = this.handleSightMarkRowsChanges.bind(this);
-
         this.authService = new AuthService();
-    }
-
-    handleSightMarkRowsChanges(rows){
-        this.setState({sightMarkRows: rows});
     }
 
     clearState() {
@@ -266,16 +195,7 @@ class AddBowForm extends Component {
                                 <hr />
                             </div>))}
 
-                        <FlatButton onClick={this.handleAddNewSightMarks} fullWidth={true}>New Sight Mark:</FlatButton>
-                        {this.state.sightMarkRows.map((sightMark, index) => (
-                            <div key={index}>
-                                <TextField placeholder="mark" type="number" value={sightMark.label} onChange={(event) => this.handleMarkChange(event, index)} />
-                                <span> at </span>
-                                <TextField placeholder="range" type="number" value={sightMark.value} onChange={(event) => this.handleRangeChange(event, index)} />
-                                <FlatButton onClick={(event) => this.handleDeleteSightMark(event, index)}>remove</FlatButton>
-                                <hr />
-                            </div>))}
-                        <MultiRowSelector buttonName="New Sight Mark:" label="mark" value="range" separatorText="at" rows={this.state.sightMarkRows} handleRowsChanges={this.handleSightMarkRowsChanges} />
+                        <MultiRowSelector buttonName="test"/>
 
                     </CardText>
                     <CardActions>
@@ -286,4 +206,4 @@ class AddBowForm extends Component {
         );
     }
 }
-export default AddBowForm;
+export default AddArrowForm;
