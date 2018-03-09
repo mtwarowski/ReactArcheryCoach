@@ -12,13 +12,11 @@ import { pink500 } from 'material-ui/styles/colors';
 
 import LinkFloatingActionButton from '../Layout/LinkFloatingActionButton';
 
-
 class Bows extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      token: null,
+    this.state = {      
       bows: null,
       handleUserDataChange: this.props.handleUserDataChange
     };
@@ -106,12 +104,21 @@ class Bows extends Component {
                   {
                     bow.image ?
                       <img src={bow.image} alt="" />
-                      : <img src="http://www.material-ui.com/images/nature-600-337.jpg" alt="" />
+                      : <img src="bow.png" alt="" />
 
                   }
                 </CardMedia>
                 <CardText>
                   <div><span>{bow.description}</span></div>
+                </CardText>
+                <CardText>
+                  {bow.sightMarks ? bow.sightMarks.map((sighMark) => (<div><span></span>{sighMark.value}<span> at </span><span>{sighMark.distance}</span></div>)) : ''}
+                </CardText>
+                <CardText>
+                  <div><span>BowType:</span><span>{bow.bowType}</span></div>
+                  <div><span>DrawWeight:</span><span>{bow.drawWeight}</span></div>
+                  <div><span>BraceHeight:</span><span>{bow.braceHeight}</span></div>
+                  <div><span>BowString:</span><span>{bow.bowString}</span></div>
                 </CardText>
                 <CardActions>
                   <IconButton onClick={() => this.handleBowDelete(bow.key)}><Delete /></IconButton>

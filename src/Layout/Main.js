@@ -14,7 +14,7 @@ const Main = () => (
             <Route exact path='/' component={Dashboard} />
             <PrivateRoute path='/Practices' component={PracticesPage} />
             <PrivateRoute path='/Bows' component={EquipmentPage} />
-            <PrivateRoute path='/Arrows' component={Arrows} />
+            <PrivateRoute path='/Arrows' component={EquipmentPage} />
         </Switch>
     </main>
 )

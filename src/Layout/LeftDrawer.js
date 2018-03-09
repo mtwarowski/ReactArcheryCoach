@@ -54,7 +54,7 @@ const LeftDrawer = (props) => {
     const menus = [
         { text: 'Practices', icon: <Assessment/>, link: '/practices' },
         { text: 'Bows', icon: <Web/>, link: '/bows' },
-        // { text: 'Table Page', icon: <GridOn/>, link: '/table' },
+        { text: 'Arrows', icon: <Web/>, link: '/arrows' },
         // { text: 'Login Page', icon: <PermIdentity/>, link: '/login' }
       ];
     return (
@@ -67,7 +67,7 @@ const LeftDrawer = (props) => {
           </div>
             <div style={styles.avatar.div}>
                 <Avatar src="http://www.material-ui.com/images/uxceo-128.jpg"
-                    size={50}
+                    size={30}
                     style={styles.avatar.icon} />
                 <span style={styles.avatar.span}>{props.username}</span>
             </div>

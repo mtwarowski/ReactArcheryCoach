@@ -1,107 +1,127 @@
 import React, { Component } from 'react';
 import { database, auth } from '../Auth/firebase.js';
 
+import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';import IconButton from 'material-ui/IconButton/IconButton';
+import Delete from 'material-ui/svg-icons/action/delete';
+
 import RaisedButton from 'material-ui/RaisedButton';
 import Avatar from 'material-ui/Avatar';
 
+import AuthService from '../Auth/AuthService';
+import LinkFloatingActionButton from '../Layout/LinkFloatingActionButton';
+
 class Arrows extends Component {
   constructor(props) {
-    super(props);    
-    
-    this.onImageChanged = this.onImageChanged.bind(this);
+    super(props);
     this.state = {
-      imageData: ''
+      arrows: null,
+      handleUserDataChange: this.props.handleUserDataChange
     };
 
-    // this.state = {
-    //   token: null,  
-    //   bows: null,
-    //   handleUserDataChange: this.props.handleUserDataChange
-    // };
+    this.authService = new AuthService();    
+    this.handleArrowDelete = this.handleArrowDelete.bind(this);
   }
 
-  // componentDidMount() {
-  //   var user = auth.currentUser;
-  //   if (!this.state.arrows && user) {
-  //     const itemsRef = database.ref('userData/' + user.uid + '/arrows');
-  //     itemsRef.on('value', (snapshot) => {
-  //         let bows = snapshot.val();
-  //         let newState = [];
-  
-  //         for (let key in bows) {
-  //           newState.push(bows[key]);
-  //         }
-  
-  //         this.setState({
-  //           bows: newState
-  //         });
-  //     });
-  
-  //     }
-  // }
-  
- 
-  // componentDidUpdate(prevProps, prevState) {
-  //   var user = auth.currentUser;
-  //   if (user && !this.state.bows) {
-  //   const itemsRef = database.ref('userData/' + user.uid + '/bows');
-  //   itemsRef.on('value', (snapshot) => {
-  //       let bows = snapshot.val();
-  //       let newState = [];
+  componentDidMount() {
+    var userId = this.authService.getUserId();
+    if (!this.state.arrows && userId) {
+      const itemsRef = database.ref('userData/' + userId + '/arrows');
+      itemsRef.on('value', (snapshot) => {
+        let arrows = snapshot.val();
+        let newState = [];
 
-  //       for (let key in bows) {
-  //         newState.push(bows[key]);
-  //       }
+        for (let key in arrows) {
+          let arrow = arrows[key];
+          arrow.key = key;
+          newState.push(arrow);
+        }
 
-  //       this.setState({
-  //         bows: newState
-  //       });
-  //   });
+        this.setState({
+          arrows: newState
+        });
+      });
 
-  //   }
-  // }
-
-
-    //   name: string;
-    // diameterInMm: number;
-    
-    // shaftType: string;
-    // amoLengthInCm: number;
-    // vanes: string;
-    // nocks: string;
-    // comment: string;
-
-  onImageChanged(e){
-
-    let reader = new FileReader();
-    let file = e.target.files[0];
-    reader.onloadend = () => this.setState({ file: file, imagePreviewUrl: reader.result });
-    reader.readAsDataURL(file);
+    }
   }
 
-  
+  componentDidUpdate(prevProps, prevState) {
+    var userId = this.authService.getUserId();
+    if (!this.state.arrows && userId) {
+      const itemsRef = database.ref('userData/' + userId + '/arrows');
+      itemsRef.on('value', (snapshot) => {
+        let arrows = snapshot.val();
+        let newState = [];
 
+        for (let key in arrows) {
+          let arrow = arrows[key];
+          arrow.key = key;
+          newState.push(arrow);
+        }
+
+
+        this.setState({
+          arrows: newState
+        });
+      });
+
+    }
+  }
+
+  handleArrowDelete(key) {
+    if (!key) {
+      return;
+    }
+
+    let itemsRef = database.ref('userData/' + userId + '/arrows/' + key);
+
+    var userId = this.authService.getUserId();
+    database.ref('userData/' + userId + '/arrows/' + key).remove().then(function () {
+    }.bind(this)).catch(function (error) {
+      console.error('Error writing new message to Firebase Database', error);
+    });
+  }
   
   render() {
+    const styles = {
+      cardContainer: {
+        marginTop: 10,
+      },
+      card: {
+        margin: 10,
+      }
+    }
     return (
-      <div>
-        {/* {
-          this.state.bows ? 
-          this.state.bows.map((bow, index) => (
-            <div key={index}>{bow.brand}</div>
-        )) : <div>No data</div>
-        } */}
-         <Avatar
-            src={this.state.imagePreviewUrl}
-            size={200}
-        /> 
+      <div style={styles.cardContainer} className="row">
+        {!this.state.arrows ? <div>Unable to load arrows.</div>
+          : this.state.arrows.map((arrow, index) => (
+            <div key={index} className="col-xs-12 col-sm-12 col-md-6 col-lg-4">
+              <Card style={styles.card}>
+                <CardMedia overlay={<CardTitle title={arrow.name} subtitle={arrow.vanes} />}>
+                  {
+                    arrow.image ?
+                      <img src={arrow.image} alt="" />
+                      : <img src="bow.png" alt="" />
 
-        <img src={this.state.imagePreviewUrl} />
-        <RaisedButton
-          containerElement='label' // <-- Just add me!
-          label='My Label'>
-          <input onChange={this.onImageChanged} type="file" />
-        </RaisedButton>
+                  }
+                </CardMedia>
+                <CardText>
+                  <div><span>{arrow.comment}</span></div>
+                </CardText>
+                <CardText>
+                  <div><span>shaftType:</span><span>{arrow.shaftType}</span></div>
+                  <div><span>nocks:</span><span>{arrow.nocks}</span></div>
+                  <div><span>amoLengthInCm:</span><span>{arrow.amoLengthInCm}</span></div>
+                  <div><span>diameterInMm:</span><span>{arrow.diameterInMm}</span></div>
+                </CardText>
+                <CardActions>
+                  <IconButton onClick={() => this.handlearrowDelete(arrow.key)}><Delete /></IconButton>
+                </CardActions>
+              </Card>
+            </div>
+          ))
+        }
+
+        <LinkFloatingActionButton url="/arrows/new" />
       </div>
     );
   }

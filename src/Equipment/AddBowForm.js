@@ -13,68 +13,7 @@ import Avatar from 'material-ui/Avatar';
 import firebase, { database } from '../Auth/firebase.js';
 import AuthService from '../Auth/AuthService';
 
-
-class MultiRowSelector extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = { rows: [] };
-        this.handleAddNewRow = this.handleAddNewRow.bind(this);
-        this.handleAddNewRow = this.handleAddNewRow.bind(this);
-        this.handleLabelChange = this.handleLabelChange.bind(this);
-        this.handleValueChange = this.handleValueChange.bind(this);
-    }
-
-    handleAddNewRow() {
-        let rows = this.state.rows;
-        rows.push({ label: '', value: '' });
-        this.setState({ rows: rows });
-        this.handleRowsChanges(rows);
-    }
-
-    handleDeleteRow(event, index) {
-        event.preventDefault();
-        var row = this.state.rows[index];
-        var rows = this.state.rows.filter((value) => value !== row);
-        this.setState({ rows: rows });
-        this.handleRowsChanges(rows);
-    }
-
-    handleLabelChange(event, index) {
-        var rows = this.state.rows;
-        rows[index].label = event.target.value;
-        this.setState({ rows: rows });
-        this.handleRowsChanges(rows);
-    }
-
-    handleValueChange(event, index) {
-        var rows = this.state.rows;
-        rows[index].value = event.target.value;
-        this.setState({ rows: rows });
-        this.handleRowsChanges(rows);
-    }
-
-    handleRowsChanges(rows){
-        this.props.handleRowsChanges(rows);
-    }
-
-    render(){
-        const props = this.props;
-        return (
-            <div>
-            <FlatButton onClick={this.handleAddNewRow} fullWidth={true}>{props.buttonName}</FlatButton>
-            {props.rows.map((row, index) => (
-                <div key={index}>
-                    <TextField placeholder={props.label} type="number" value={row.label} onChange={(event) => this.handleLabelChange(event, index)} />
-                    <span> {props.separatorText} </span>
-                    <TextField placeholder={props.value} type="number" value={row.value} onChange={(event) => this.handleValueChange(event, index)} />
-                    <FlatButton onClick={(event) => this.handleDeleteRow(event, index)}>remove</FlatButton>
-                    <hr />
-                </div>))}
-            </div>
-        );
-    }
-}
+import MultiRowSelector from '../Layout/MultiRowSelector';
 
 class AddBowForm extends Component {
 
@@ -85,7 +24,7 @@ class AddBowForm extends Component {
             brand: '',
             size: null,
             description: '',
-            sightMarks: [{ mark: 10, range: 70 }],
+            sightMarkRows: [],
             bowType: '',
 
             drawWeight: 40,
@@ -103,23 +42,14 @@ class AddBowForm extends Component {
                 { no: 4, primaryText: 'Long Bow' },
                 { no: 5, primaryText: 'Hourse Bow' },
                 { no: 6, primaryText: 'Yumi' }
-            ],
-
-            sightMarkRows: []            
+            ]          
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleOnImageSelected = this.handleOnImageSelected.bind(this);
-        this.handleAddNewSightMarks = this.handleAddNewSightMarks.bind(this);
         this.handleSelectedBowTypeChange = this.handleSelectedBowTypeChange.bind(this);
 
-        this.handleSightMarkRowsChanges = this.handleSightMarkRowsChanges.bind(this);
-
         this.authService = new AuthService();
-    }
-
-    handleSightMarkRowsChanges(rows){
-        this.setState({sightMarkRows: rows});
     }
 
     clearState() {
@@ -128,10 +58,10 @@ class AddBowForm extends Component {
             brand: '',
             size: null,
             description: '',
-            sightMarks: [],
+            sightMarkRows: [],
             bowType: '',
 
-            drawWeight: 40,
+            drawWeight: null,
             braceHeight: '',
             bowString: '',
 
@@ -140,45 +70,11 @@ class AddBowForm extends Component {
         });
     }
 
-
-    handleOnImageSelected(e) {
-
-        let reader = new FileReader();
-        let file = e.target.files[0];
-
-        if (file) {
-            reader.onloadend = () => this.setState({ file: file, image: reader.result, imageName: file.name });
-            reader.readAsDataURL(file);
-        }
-    }
-
-    handleAddNewSightMarks() {
-        let sightMarks = this.state.sightMarks;
-        sightMarks.push({ mark: null, range: null });
-        this.setState({ sightMarks: sightMarks });
-    }
-
-    handleDeleteSightMark(event, index) {
-        event.preventDefault();
-        var sightMark = this.state.sightMarks[index];
-        var sightMarks = this.state.sightMarks.filter((value) => value !== sightMark);
-        this.setState({ sightMarks: sightMarks });
-    }
-
-    handleMarkChange(event, index) {
-        var sightMarks = this.state.sightMarks;
-        sightMarks[index].mark = event.target.value;
-        this.setState({ sightMarks: sightMarks });
-    }
-
-    handleRangeChange(event, index) {
-        var sightMarks = this.state.sightMarks;
-        sightMarks[index].range = event.target.value;
-        this.setState({ sightMarks: sightMarks });
+    handleOnImageSelected(imagePickerState) {
+        this.setState({ file: imagePickerState.file, image: imagePickerState.image, imageName: imagePickerState.file.name });
     }
 
     handleSelectedBowTypeChange(event, index, value) {
-        // var bowTypeName = this.state.availableBowTypes[value].primaryText;
         var bowTypeName = this.state.availableBowTypes.filter((currentBowType) => currentBowType.no === value)[0];
 
         if (!bowTypeName) {
@@ -197,12 +93,20 @@ class AddBowForm extends Component {
         var userId = this.authService.getUserId();
         database.ref('userData/' + userId + '/bows').push({
             name: this.state.name,
-            brand: 'brand' + this.state.name,
-            size: 1,
-            description: '',
+            brand: this.state.brand,
+            size: this.state.size,
+            description: this.state.description,
             image: this.state.image,
+
+            
+            drawWeight: this.state.drawWeight,
+            braceHeight: this.state.braceHeight,
+            bowString: this.state.bowString,
+
+            sightMarks: this.state.sightMarkRows.map((row) => ({ distance: row.label, value: row.value }))
         }).then(function () {
             this.clearState();
+            this.props.history.push('/bows/');
         }.bind(this)).catch(function (error) {
             console.error('Error writing new message to Firebase Database', error);
         });
@@ -238,6 +142,11 @@ class AddBowForm extends Component {
 
                         <TextField placeholder="Size" name="size" type="number" value={this.state.size} onChange={(event) => this.setState({ size: event.target.value })} fullWidth={true} />
 
+
+                        <TextField placeholder="Draw Weight" name="drawWeight" type="number" value={this.state.drawWeight} onChange={(event) => this.setState({ drawWeight: event.target.value })} fullWidth={true} />
+                        <TextField placeholder="Brace Height" name="braceHeight" value={this.state.braceHeight} onChange={(event) => this.setState({ braceHeight: event.target.value })} fullWidth={true} />
+                        <TextField placeholder="Bow String" name="bowString" value={this.state.bowString} onChange={(event) => this.setState({ bowString: event.target.value })} fullWidth={true} />
+
                         <SelectField floatingLabelText="Bow Type"
                             value={this.state.selectedBowTypeNo}
                             onChange={this.handleSelectedBowTypeChange}
@@ -245,38 +154,8 @@ class AddBowForm extends Component {
                             {this.state.availableBowTypes.map((availableBowType, index) => (<MenuItem key={availableBowType.no} value={availableBowType.no} primaryText={availableBowType.primaryText} />))}
                         </SelectField>
 
-                        <FlatButton fullWidth={true}
-                            label={this.state.imageName}// "Choose an Image"
-                            labelPosition="before"
-                            style={styles.uploadButton}
-                            containerElement="label">
-                            <input type="file" style={styles.uploadInput} onChange={this.handleOnImageSelected} />
-                        </FlatButton>
-
-                        {/*<Avatar src={this.state.image} size={30} />
-                        <img src={this.state.image} /> */}
-
-                        <FlatButton onClick={this.handleAddNewSightMarks} fullWidth={true}>New Sight Mark:</FlatButton>
-                        {this.state.sightMarks.map((sightMark, index) => (
-                            <div key={index}>
-                                <TextField placeholder="mark" type="number" value={sightMark.mark} onChange={(event) => this.handleMarkChange(event, index)} />
-                                <span> at </span>
-                                <TextField placeholder="range" type="number" value={sightMark.range} onChange={(event) => this.handleRangeChange(event, index)} />
-                                <FlatButton onClick={(event) => this.handleDeleteSightMark(event, index)}>remove</FlatButton>
-                                <hr />
-                            </div>))}
-
-                        <FlatButton onClick={this.handleAddNewSightMarks} fullWidth={true}>New Sight Mark:</FlatButton>
-                        {this.state.sightMarkRows.map((sightMark, index) => (
-                            <div key={index}>
-                                <TextField placeholder="mark" type="number" value={sightMark.label} onChange={(event) => this.handleMarkChange(event, index)} />
-                                <span> at </span>
-                                <TextField placeholder="range" type="number" value={sightMark.value} onChange={(event) => this.handleRangeChange(event, index)} />
-                                <FlatButton onClick={(event) => this.handleDeleteSightMark(event, index)}>remove</FlatButton>
-                                <hr />
-                            </div>))}
-                        <MultiRowSelector buttonName="New Sight Mark:" label="mark" value="range" separatorText="at" rows={this.state.sightMarkRows} handleRowsChanges={this.handleSightMarkRowsChanges} />
-
+                        <ImagePicker label="Select Image" handleImageDataSelected={this.handleOnImageSelected} />
+                        <MultiRowSelector buttonName="New Sight Mark:" label="mark" value="range" separatorText="at" rows={this.state.sightMarkRows} handleRowsChanges={(rows)=> this.setState({ sightMarkRows: rows })} />
                     </CardText>
                     <CardActions>
                         <FlatButton type="submit" value="Submit" label="Submit" />
@@ -287,3 +166,53 @@ class AddBowForm extends Component {
     }
 }
 export default AddBowForm;
+
+
+export class ImagePicker extends Component{
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            imageName: this.props.label || 'Choose an Image',      
+        };
+        this.handleOnImageSelected = this.handleOnImageSelected.bind(this);
+    }
+
+    handleOnImageSelected(e) {
+
+        let reader = new FileReader();
+        let file = e.target.files[0];
+
+        if (file) {
+            reader.onloadend = () => this.setState({ file: file, image: reader.result, imageName: file.name }, () => this.props.handleImageDataSelected(this.state));
+            reader.readAsDataURL(file);
+        }
+    }
+
+    render(){    
+        const styles = {
+            uploadButton: {
+                verticalAlign: 'middle',
+            },
+            uploadInput: {
+                cursor: 'pointer',
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                right: 0,
+                left: 0,
+                width: '100%',
+                opacity: 0,
+            },
+        };
+        return (
+            <FlatButton fullWidth={true}
+                label={this.state.imageName}// "Choose an Image"
+                labelPosition="before"
+                style={styles.uploadButton}
+                containerElement="label">
+                <input type="file" style={styles.uploadInput} onChange={this.handleOnImageSelected} />
+            </FlatButton>
+        );
+    }
+}
