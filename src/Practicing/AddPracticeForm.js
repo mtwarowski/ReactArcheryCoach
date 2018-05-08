@@ -35,7 +35,7 @@ class AddPracticeForm extends Component {
     axios.post(this.practiceApiBaseUrl + 'api/practice/', {
       name: this.state.practiceName,
       comment: this.state.practiceComment,
-      practiceDateTimeStamp: this.state.practiceDate,
+      practiceDateTimeStamp: this.getUnixUtcTimeStamp(this.state.practiceDate),
       practiceRounds: this.state.practiceRounds,
       totalValue: this.getTotalValue()
     }, {
@@ -57,6 +57,10 @@ class AddPracticeForm extends Component {
       total += (practiceRound.numberOfRound * practiceRound.numberOfTimesPairRound);
     });
     return total;
+  }
+
+  getUnixUtcTimeStamp(date){
+    return Math.floor(date.getTime() / 1000);
   }
 
   handlePracticeCommentChange(event) {

@@ -61,6 +61,10 @@ class PracticesCards extends Component {
       });
   }
 
+  getTimeTextFromTimeSpam(unix_timestamp){
+    var date = new Date(unix_timestamp*1000);
+    return date.toDateString();
+  }
 
   render() {
 
@@ -86,7 +90,7 @@ class PracticesCards extends Component {
                   }
                 />
                 <CardText>
-                  <div><span>{practice.name} {practice.practiceDateTimeStamp}</span></div>
+                  <div><span>{practice.name} {this.getTimeTextFromTimeSpam(practice.practiceDateTimeStamp)}</span></div>
                 </CardText>
                 <CardActions>
                   <IconButton onClick={() => this.handlePracticeDelete(practice.id)}><Delete /></IconButton>

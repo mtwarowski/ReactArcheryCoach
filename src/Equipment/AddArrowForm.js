@@ -16,10 +16,8 @@ import AuthService from '../Auth/AuthService';
 export default class AddArrowForm extends Component {
 
     constructor(props) {
-        super(props);
-        
+        super(props);        
     }
-
 
     render() {
         return (

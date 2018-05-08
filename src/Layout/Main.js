@@ -4,9 +4,10 @@ import { Switch, Route } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 
 import Dashboard from '../Dashboard';
-import Arrows from '../Equipment/Arrows';
 import PracticesPage from '../Practicing/PracticesPage';
 import EquipmentPage from '../Equipment/EquipmentPage';
+import AddIntensityPlanForm from '../Intensity/AddIntensityPlanForm';
+import TargetFace from '../Scoring/TargetFace';
 
 const Main = () => (
     <main>
@@ -15,8 +16,9 @@ const Main = () => (
             <PrivateRoute path='/Practices' component={PracticesPage} />
             <PrivateRoute path='/Bows' component={EquipmentPage} />
             <PrivateRoute path='/Arrows' component={EquipmentPage} />
+            <Route path='/Test' component={AddIntensityPlanForm} />
+            <Route path='/TargetFace' component={TargetFace} />
         </Switch>
     </main>
 )
-
 export default Main;
