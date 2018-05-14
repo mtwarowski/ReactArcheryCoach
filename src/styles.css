@@ -13,10 +13,10 @@ body {
   margin: 0;
   background-color: #efefef;
 }
-
+/* 
 body, html, #app, #app > div{
-  height: 100%;
-}
+  min-height: 100%;
+} */
 
 a {
   color: #ff4081;

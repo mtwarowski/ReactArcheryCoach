@@ -5,6 +5,42 @@ import Konva from 'konva';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
+import { throttle } from 'lodash';
+
+
+
+class SizeWrapper extends React.Component {
+    constructor(props) {
+        super(props)
+        this.resize = this.resize.bind(this)
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.resize);
+        this.resize();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.resize);
+    }
+
+    resize = throttle(() => {
+        this.width = this.div.parentNode.clientWidth;
+        this.height = this.div.parentNode.clientHeight;
+    }, 50)
+
+    setRef = node => {
+        this.div = node;
+    }
+
+    render() {
+        return <div className={this.props.className} ref={this.setRef}>
+            before
+            {this.props.children}
+            after
+      </div>;
+    }
+}
 
 
 
@@ -18,50 +54,50 @@ class ArrowPoint extends React.Component {
 
         this.handleClick = this.handleClick.bind(this);
     }
-    
-    handleClick(e){
-        
+
+    handleClick(e) {
+
         this.setState({
             isEditMode: true
         });
     };
-    
+
     handlePointDragEnd = (e, index) => {
-        let newPoint  = {
+        let newPoint = {
             xPos: e.target.x(),
             yPos: e.target.y()
         };
-        
+
         this.setState({
             isEditMode: false
         });
         this.props.handlePointChanged(newPoint, index);
     }
 
-    getEditModeView(){
-      return (
-        <Layer>
-            <Circle
-                draggable={true}
-                onDragEnd={(e) => this.handlePointDragEnd(e, this.props.pointIndex)}
-                x={this.props.point.xPos}
-                y={this.props.point.yPos}
-                radius={30}
-                stroke={'yellow'}
-                fill={'rgba(255, 0, 0, 0.4)'}
-                strokeWidth={2} /> 
-            <Circle
-                x={this.props.point.xPos}
-                y={this.props.point.yPos}
-                radius={5}
-                fill={'grey'}
-                stroke={'grey'}
-                strokeWidth={1}
-                onClick={this.handleClick} />
-        </Layer>);
+    getEditModeView() {
+        return (
+            <Layer>
+                <Circle
+                    draggable={true}
+                    onDragEnd={(e) => this.handlePointDragEnd(e, this.props.pointIndex)}
+                    x={this.props.point.xPos}
+                    y={this.props.point.yPos}
+                    radius={30}
+                    stroke={'yellow'}
+                    fill={'rgba(255, 0, 0, 0.4)'}
+                    strokeWidth={2} />
+                <Circle
+                    x={this.props.point.xPos}
+                    y={this.props.point.yPos}
+                    radius={5}
+                    fill={'grey'}
+                    stroke={'grey'}
+                    strokeWidth={1}
+                    onClick={this.handleClick} />
+            </Layer>);
     }
-    
-    getNotEditModeView(){
+
+    getNotEditModeView() {
         return (
             <Layer>
                 <Circle
@@ -77,11 +113,11 @@ class ArrowPoint extends React.Component {
 
     render() {
         return (
-            this.props.point ? 
-                this.state.isEditMode ? 
-                this.getEditModeView()
-                : this.getNotEditModeView() 
-            : ''
+            this.props.point ?
+                this.state.isEditMode ?
+                    this.getEditModeView()
+                    : this.getNotEditModeView()
+                : ''
         );
     }
 }
@@ -104,6 +140,9 @@ export default class TargetFace extends Component {
         this.scaleStage = this.scaleStage.bind(this);
         this.addNewPoint = this.addNewPoint.bind(this);
         this.handlePointChanged = this.handlePointChanged.bind(this);
+
+
+        this.resize = this.resize.bind(this);
     }
 
     getTargetFace() {
@@ -143,7 +182,7 @@ export default class TargetFace extends Component {
         };
     }
 
-    addNewPoint(e){
+    addNewPoint(e) {
         this.state.points.push({
             xPos: e.target.x(),
             yPos: e.target.y()
@@ -152,7 +191,7 @@ export default class TargetFace extends Component {
         this.setState({ points: this.state.points });
     }
 
-    handlePointChanged(point, index){        
+    handlePointChanged(point, index) {
         this.state.points[index] = point;
         this.setState({ points: this.state.points });
     }
@@ -162,9 +201,34 @@ export default class TargetFace extends Component {
         this.setState({ scale: newScale });
     }
 
+
+    componentDidMount() {
+        window.addEventListener('resize', this.resize);
+        this.resize();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.resize);
+    }
+
+    resize = throttle(() => {
+
+        this.setState({
+            width: this.div.parentNode.clientWidth,
+            height: this.div.parentNode.clientHeight
+        });
+
+        this.width = this.div.parentNode.clientWidth;
+        this.height = this.div.parentNode.clientHeight;
+    }, 50)
+
+    setRef = node => {
+        this.div = node;
+    }
+
     render() {
         return (
-            <div style={{width: '100%'}}>
+            <div style={{ width: this.state.height, width: this.state.width }} ref={this.setRef}>
                 <div>
                     <FloatingActionButton mini={true} onClick={() => this.scaleStage(-0.1)}>
                         <ContentRemove />
@@ -192,10 +256,10 @@ export default class TargetFace extends Component {
                             )}
                         </Layer>
                     ))}
-
-
                     {this.state.points.map((point, index) => <ArrowPoint key={index} point={point} pointIndex={index} handlePointChanged={this.handlePointChanged} />)}
                 </Stage>
+
+
             </div>
         );
     }
