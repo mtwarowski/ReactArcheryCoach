@@ -2,145 +2,15 @@ import React, { Component } from 'react';
 import { Stage, Layer, Circle, Rect, Text, Group } from 'react-konva';
 import Konva from 'konva';
 
-import Avatar from 'material-ui/Avatar';
-import RaisedButton from 'material-ui/RaisedButton';
-import NavigationArrowDropDown from 'material-ui/svg-icons/navigation/arrow-drop-down';
-import NavigationArrowDropUp from 'material-ui/svg-icons/navigation/arrow-drop-up';
+import ArrowPoint from './ArrowPoint';
+import ArrowPointBar from './ArrowPointBar';
+import TargetFaceControlBar from './TargetFaceControlBar';
+import { getArrowPointWithValues } from './TargetFacePointDetection';
 
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import ContentRemove from 'material-ui/svg-icons/content/remove';
-import { throttle } from 'lodash';
-import { POINT_CONVERSION_HYBRID } from 'constants';
-
-class ArrowPointBar extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            isOpened: false
-        };
-    }
-    
-    render() {
-        const styles = {
-            arrowPointBarContainer: {
-                margin: 0,
-                top: 50,
-                left: 0,
-                position: 'fixed',
-                width: '100%'
-            },
-            arrowPointPresenterContainer:{
-                backgroundColor: 'white',
-                paddingTop: 10,
-
-            },
-            arrowPointPresenter: {
-                marginLeft: '5px'
-            },
-            navArrowDropUpDownButton:{
-                float: 'right',
-                marginRight: '10px'
-            }
-        };
-
-        return (
-        <div style={styles.arrowPointBarContainer}>
-            {this.state.isOpened && 
-            <div style={styles.arrowPointPresenterContainer} >
-                {this.props.points.map((arrowPoint, idx) => 
-                    <Avatar style={styles.arrowPointPresenter} onClick={() => this.props.onArrowPointSelected(arrowPoint)} key={idx}>{arrowPoint.xPos}</Avatar>
-                )}
-            </div>
-            }
-            <RaisedButton style={styles.navArrowDropUpDownButton} onClick={() => this.setState({isOpened: !this.state.isOpened})} icon={this.state.isOpened ? <NavigationArrowDropUp /> : <NavigationArrowDropDown />} />
-        </div>);
-    }
-}
-
-
-
-class ArrowPoint extends React.Component {
-
-    constructor(props) {
-        super(props);
-
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    //not sure do i need that. The point is so small it's hard to click it
-    handleClick(e) {
-        this.props.handlePointChanged({...this.props.point, isEditMode: !this.props.point.isEditMode}, this.props.pointIndex);
-    };
-
-    handlePointGroupDragEnd = (e) => {
-        let newPoint = {
-            xPos: this.props.point.xPos + e.target.x(),
-            yPos: this.props.point.yPos + e.target.y(),
-            isEditMode: !this.props.point.isEditMode
-        };
-
-        this.props.handlePointChanged(newPoint, this.props.pointIndex);
-    }
-
-    handlePointDragEnd = (e) => {
-        let newPoint = {
-            xPos: e.target.x(),
-            yPos: e.target.y(),
-            isEditMode: !this.props.point.isEditMode
-        };
-
-        this.props.handlePointChanged(newPoint, this.props.pointIndex);
-    }
-
-    getEditModeView() {
-        return (
-            <Group ref={(node) => this.groupNode = node }
-            draggable={true} onDragEnd={(e) => this.handlePointGroupDragEnd(e)}>
-                <Circle
-                    x={this.props.point.xPos}
-                    y={this.props.point.yPos}
-                    radius={30}
-                    stroke={'yellow'}
-                    fill={'rgba(255, 0, 0, 0.4)'}
-                    strokeWidth={2} />
-                <Circle
-                    ref={(node) => this.pointNode = node }
-                    x={this.props.point.xPos}
-                    y={this.props.point.yPos}
-                    radius={5}
-                    fill={'grey'}
-                    stroke={'grey'}
-                    strokeWidth={1}
-                    onClick={this.handleClick} />
-            </Group>);
-    }
-
-    getNotEditModeView() {
-        return (
-            <Group>
-                <Circle
-                    x={this.props.point.xPos}
-                    y={this.props.point.yPos}
-                    radius={5}
-                    fill={'grey'}
-                    stroke={'grey'}
-                    strokeWidth={1}
-                    onClick={this.handleClick} />
-            </Group>);
-    }
-
-    render() {
-        return (
-            this.props.point ?
-                this.props.point.isEditMode ?
-                    this.getEditModeView()
-                    : this.getNotEditModeView()
-                : ''
-        );
-    }
-}
+import SelectField from 'material-ui/SelectField';
+import Paper from 'material-ui/Paper';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
 
 export default class TargetFace extends Component {
 
@@ -148,13 +18,15 @@ export default class TargetFace extends Component {
         super(props);
         this.state = {
             targetFace: this.getTargetFace(),
-            points: [{ xPos: 100, yPos: 100 }, { xPos: 200, yPos: 100 }],
-            width: 50,
-            height: 50,
+            points: [{ xPos: 100, yPos: 100, radius: 6, lineWidth: 1 }, { xPos: 200, yPos: 100, radius: 6, lineWidth: 1 }],
+            width: 0,
+            height: 0,
             scale: {
                 x: 1,
                 y: 1
-            }
+            },
+            availableArrowNumbers: [1, 2, 3, 4, 5, 7, 12, 34],
+            arrowPointsSelectedIndex: null
         };
 
         this.scaleStage = this.scaleStage.bind(this);
@@ -163,52 +35,58 @@ export default class TargetFace extends Component {
 
         this.handleArrowPointBarSelected = this.handleArrowPointBarSelected.bind(this);
         this.handleAddNewArrowPoint = this.handleAddNewArrowPoint.bind(this);
+        this.handleArrowNumberSelected = this.handleArrowNumberSelected.bind(this);
         this.resize = this.resize.bind(this);
     }
 
     getTargetFace() {
         return {
-            paperSize: {
-                width: 1000,
-                height: 2500,
+            paper: {
+                x: -10,
+                y: -10,
+                width: 1020,
+                height: 1020,
             },
             targets: [
                 [
-                    { backgroundColor: 'white', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 998 / 2, },
-                    { backgroundColor: 'white', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 898 / 2, },
-                    { backgroundColor: 'black', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 798 / 2, },
-                    { backgroundColor: 'black', lineColour: 'white', lineWidth: 2, xPos: 500, yPos: 500, radius: 698 / 2, },
-                    { backgroundColor: 'blue', lineColour: 'blue', lineWidth: 2, xPos: 500, yPos: 500, radius: 598 / 2, },
-                    { backgroundColor: 'blue', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 498 / 2, },
-                    { backgroundColor: 'red', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 398 / 2, },
-                    { backgroundColor: 'red', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 298 / 2, },
-                    { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 198 / 2, },
-                    { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 98 / 2, },
-                    { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 98 / 4, },
+                    { backgroundColor: 'white', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 998 / 2, displayValue: '1', value: 1 },
+                    { backgroundColor: 'white', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 898 / 2, displayValue: '2', value: 2 },
+                    { backgroundColor: 'black', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 798 / 2, displayValue: '3', value: 3 },
+                    { backgroundColor: 'black', lineColour: 'white', lineWidth: 2, xPos: 500, yPos: 500, radius: 698 / 2, displayValue: '4', value: 4 },
+                    { backgroundColor: 'blue', lineColour: 'blue', lineWidth: 2, xPos: 500, yPos: 500, radius: 598 / 2, displayValue: '5', value: 5 },
+                    { backgroundColor: 'blue', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 498 / 2, displayValue: '6', value: 6 },
+                    { backgroundColor: 'red', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 398 / 2, displayValue: '7', value: 7 },
+                    { backgroundColor: 'red', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 298 / 2, displayValue: '8', value: 8 },
+                    { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 198 / 2, displayValue: '9', value: 9 },
+                    { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 98 / 2, displayValue: '10', value: 10 },
+                    { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 500, radius: 98 / 4, displayValue: 'X', value: 10 },
                 ],
-                [
-                    { backgroundColor: 'white', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 998 / 2, },
-                    { backgroundColor: 'white', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 898 / 2, },
-                    { backgroundColor: 'black', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 798 / 2, },
-                    { backgroundColor: 'black', lineColour: 'white', lineWidth: 2, xPos: 500, yPos: 1500, radius: 698 / 2, },
-                    { backgroundColor: 'blue', lineColour: 'blue', lineWidth: 2, xPos: 500, yPos: 1500, radius: 598 / 2, },
-                    { backgroundColor: 'blue', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 498 / 2, },
-                    { backgroundColor: 'red', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 398 / 2, },
-                    { backgroundColor: 'red', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 298 / 2, },
-                    { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 198 / 2, },
-                    { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 98 / 2, },
-                    { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 98 / 4, },
-                ]
+                // [
+                //     { backgroundColor: 'white', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 998 / 2, },
+                //     { backgroundColor: 'white', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 898 / 2, },
+                //     { backgroundColor: 'black', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 798 / 2, },
+                //     { backgroundColor: 'black', lineColour: 'white', lineWidth: 2, xPos: 500, yPos: 1500, radius: 698 / 2, },
+                //     { backgroundColor: 'blue', lineColour: 'blue', lineWidth: 2, xPos: 500, yPos: 1500, radius: 598 / 2, },
+                //     { backgroundColor: 'blue', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 498 / 2, },
+                //     { backgroundColor: 'red', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 398 / 2, },
+                //     { backgroundColor: 'red', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 298 / 2, },
+                //     { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 198 / 2, },
+                //     { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 98 / 2, },
+                //     { backgroundColor: 'yellow', lineColour: 'black', lineWidth: 2, xPos: 500, yPos: 1500, radius: 98 / 4, },
+                // ]
             ]
         };
     }
 
-    addNewArrowPoint(xPos, yPos){        
-        this.state.points.push({
+    addNewArrowPoint(xPos, yPos) {
+        let newArrowPoint = {
             xPos: xPos,
-            yPos: yPos
-        });
+            yPos: yPos,
+            radius: 12,
+            lineWidth: 1,
+        };
 
+        this.state.points.push(getArrowPointWithValues(this.state.targetFace, newArrowPoint));
         this.setState({ points: this.state.points });
     }
 
@@ -217,100 +95,121 @@ export default class TargetFace extends Component {
         this.setState({ scale: newScale });
     }
 
-
     componentDidMount() {
         this.resize();
         window.addEventListener('resize', this.resize);
-      }
-      
+    }
+
     componentWillUnmount() {
         window.removeEventListener('resize', this.resize);
     }
-        
+
     resize() {
-        this.setState({ width: window.innerWidth, height: window.innerHeight - 80 });
+        this.setState({ width: window.innerWidth, height: window.innerHeight - 60 });
     }
 
-
-    handleArrowPointBarSelected(point){
+    handleArrowPointBarSelected(point) {
         point.isEditMode = !point.isEditMode;
-        this.setState({points: this.state.points}); 
+        this.setState({ points: this.state.points });
     }
 
-    handleAddNewArrowPoint(){
+    handleAddNewArrowPoint() {
         this.addNewArrowPoint(0, 0);
     }
 
     handleStageElementClicked(e) {
         this.addNewArrowPoint(e.target.x(), e.target.y());
     }
-    
+
     handlePointChanged(point, index) {
-        this.state.points[index] = point;
-        this.setState({ points: this.state.points });
+        this.state.points[index] = getArrowPointWithValues(this.state.targetFace, point);
+        this.setState({ 
+            points: this.state.points, 
+            arrowPointsSelectedIndex: point.isEditMode ? null : index
+        });
     }
 
+    handleArrowNumberSelected(arrowNo) {
+        if(!this.state.arrowPointsSelectedIndex && this.state.arrowPointsSelectedIndex !== 0){
+            return;
+        }
+
+        this.state.points[this.state.arrowPointsSelectedIndex] = { ...this.state.points[this.state.arrowPointsSelectedIndex], arrowNo };
+        this.setState({ arrowPointsSelectedIndex: null, points: this.state.points });
+    }
 
     render() {
 
-        const styles = {            
-            margin: 0,
-            top: 'auto',
-            right: 20,
-            bottom: 20,
-            left: 'auto',
-            position: 'fixed'
-        }
-        return (
 
+        return (
             <div>
                 <Stage draggable={true}
                     onClick={this.handleStageElementClicked}
                     scale={this.state.scale}
                     height={this.state.height}
-                    width={this.state.width}>
+                    width={this.state.width}
+                    ref={node => this.stageNode = node}
+                >
                     <Layer>
-                    <Group>
-                        <Rect
-                            x={-10}
-                            y={-10}
-                            width={this.state.targetFace.paperSize.width + 20}
-                            height={this.state.targetFace.paperSize.height + 20}
-                            fill={'white'}
-                            shadowBlur={20}
-                        />
-                    </Group>
-                    {this.state.targetFace.targets.map(((target, index) =>
-                        <Group key={index}>
-                            {target.map((targetRing, idx) =>
-                                <Circle key={idx}
-                                    x={targetRing.xPos}
-                                    y={targetRing.yPos}
-                                    onClick={this.handleStageElementClicked}
-                                    radius={targetRing.radius}
-                                    fill={targetRing.backgroundColor}
-                                    stroke={targetRing.lineColour}
-                                    strokeWidth={targetRing.lineWidth} />
-                            )}
+                        <Group>
+                            <Rect
+                                x={this.state.targetFace.paper.x}
+                                y={this.state.targetFace.paper.y}
+                                width={this.state.targetFace.paper.width}
+                                height={this.state.targetFace.paper.height}
+                                fill={'white'}
+                                shadowBlur={20}
+                            />
                         </Group>
-                    ))}
-                    {this.state.points.map((point, index) => <ArrowPoint key={index} point={point} pointIndex={index} handlePointChanged={this.handlePointChanged} />)}
-
+                        {this.state.targetFace.targets.map(((target, index) =>
+                            <Group key={index}>
+                                {target.map((targetRing, idx) =>
+                                    <Circle key={idx}
+                                        x={targetRing.xPos}
+                                        y={targetRing.yPos}
+                                        onClick={this.handleStageElementClicked}
+                                        radius={targetRing.radius}
+                                        fill={targetRing.backgroundColor}
+                                        stroke={targetRing.lineColour}
+                                        strokeWidth={targetRing.lineWidth} />
+                                )}
+                            </Group>
+                        ))}
+                        {this.state.points.map((point, index) => <ArrowPoint key={index} point={point} pointIndex={index} handlePointChanged={this.handlePointChanged} />)}
                     </Layer>
                 </Stage>
-                <div style={styles}>
-                    <FloatingActionButton mini={true} onClick={() => this.scaleStage(-0.1)}>
-                        <ContentRemove />
-                    </FloatingActionButton>
-                    <FloatingActionButton mini={true} onClick={() => this.scaleStage(0.1)}>
-                        <ContentAdd />
-                    </FloatingActionButton>
-                    <FloatingActionButton secondary={true} mini={true} onClick={this.handleAddNewArrowPoint}>
-                        <ContentAdd />
-                    </FloatingActionButton>
-                </div>
+                <TargetFaceControlBar scaleStage={this.scaleStage} handleAddNewArrowPoint={this.handleAddNewArrowPoint} />
                 <ArrowPointBar points={this.state.points} onArrowPointSelected={this.handleArrowPointBarSelected} />
+                <ArrowNumberSelectorBar availableArrowNumbers={this.state.availableArrowNumbers} arrowPointsSelectedIndex={this.state.arrowPointsSelectedIndex} handleArrowNumberSelected={this.handleArrowNumberSelected} />
             </div>
         );
     }
+}
+
+
+const ArrowNumberSelectorBar = ({ availableArrowNumbers, arrowPointsSelectedIndex, handleArrowNumberSelected }) => {
+
+    const paperStyles = {
+        display: 'inline-block',
+        margin: '16px 32px 16px 0',
+    };
+
+    const arrowNumberSelectorBarStyles = {
+        margin: 0,
+        top: 'auto',
+        bottom: 0,
+        left: 20,
+        position: 'fixed'
+    }
+
+    return (
+        arrowPointsSelectedIndex || arrowPointsSelectedIndex === 0 ?
+            <div style={arrowNumberSelectorBarStyles}>
+                <Paper style={paperStyles}>
+                    <Menu>
+                        {availableArrowNumbers.map(x => <MenuItem  key={x} onClick={() => handleArrowNumberSelected(x)} primaryText={'Arrow No: ' + x} />)}
+                        <MenuItem onClick={() => handleArrowNumberSelected(null)} primaryText={'Cancel'} />
+                    </Menu>
+                </Paper>
+            </div> : '');
 }

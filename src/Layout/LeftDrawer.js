@@ -66,7 +66,7 @@ const LeftDrawer = (props) => {
                 Material Admin
           </div>
             <div style={styles.avatar.div}>
-                <Avatar src="http://www.material-ui.com/images/uxceo-128.jpg"
+                <Avatar src="http://www.v0.material-ui.com/images/uxceo-128.jpg"
                     size={30}
                     style={styles.avatar.icon} />
                 <span style={styles.avatar.span}>{props.username}</span>
