@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Paper from 'material-ui/Paper';
 import Avatar from 'material-ui/Avatar';
 import Badge from 'material-ui/Badge';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -26,11 +27,11 @@ export default class ArrowPointBar extends React.Component {
             },
             arrowPointPresenterContainer: {
                 backgroundColor: 'white',
-                paddingTop: 10,
+                padding: 10,
 
             },
             arrowPointPresenter: {
-                marginLeft: '5px'
+                margin: '10px 10px 0px 0px'
             },
             navArrowDropUpDownButton: {
                 float: 'right',
@@ -40,23 +41,21 @@ export default class ArrowPointBar extends React.Component {
         return (
             <div style={styles.arrowPointBarContainer}>
                 {this.state.isOpened &&
-                    <div style={styles.arrowPointPresenterContainer} >
+                    <Paper style={styles.arrowPointPresenterContainer} >
                         {this.props.points.map((arrowPoint, idx) =>
                             arrowPoint.arrowNo ?
-                                <Badge style={{ padding: 12 }} badgeContent={arrowPoint.arrowNo} primary={true} key={idx}>
+                                <Badge style={{ padding: '10px 10px 0px 0px' }} badgeContent={arrowPoint.arrowNo} primary={true} key={idx}>
                                     <Avatar onClick={() => this.props.onArrowPointSelected(arrowPoint)}
-                                        style={styles.arrowPointPresenter}
                                         backgroundColor={arrowPoint.isEditMode ? yellowA700 : blue500}
                                     >{arrowPoint.displayValue || '--'}</Avatar>
                                 </Badge> :
-                                <span style={{ padding: 12 }} key={idx}>
-                                    <Avatar onClick={() => this.props.onArrowPointSelected(arrowPoint)}
-                                        style={styles.arrowPointPresenter}
-                                        backgroundColor={arrowPoint.isEditMode ? yellowA700 : blue500}
-                                    >{arrowPoint.displayValue || '--'}</Avatar>
-                                </span>
+                                <Avatar onClick={() => this.props.onArrowPointSelected(arrowPoint)}
+                                    style={styles.arrowPointPresenter}  key={idx}
+                                    backgroundColor={arrowPoint.isEditMode ? yellowA700 : blue500}
+                                >{arrowPoint.displayValue || '--'}</Avatar>
+
                         )}
-                    </div>
+                    </Paper>
                 }
                 <RaisedButton style={styles.navArrowDropUpDownButton} onClick={() => this.setState({ isOpened: !this.state.isOpened })} icon={this.state.isOpened ? <NavigationArrowDropUp /> : <NavigationArrowDropDown />} />
             </div>);

@@ -2,8 +2,11 @@ import React from 'react';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
+import ZoomIn from 'material-ui/svg-icons/action/zoom-in';
+import ZoomOut from 'material-ui/svg-icons/action/zoom-out';
 
 const scaleStageFactor = 0.1;
+const twiceScaleStageFactor = scaleStageFactor * 2;
 const styles = {
     margin: 0,
     top: 'auto',
@@ -13,19 +16,31 @@ const styles = {
     position: 'fixed'
 }
 
-const TargetFaceControlBar = ({scaleStage, handleAddNewArrowPoint}) => {
+const floatingActionButtonStyles = {
+    marginTop: 2,
+}
+
+
+const TargetFaceControlBar = ({ scaleStage, handleAddNewArrowPoint, scale }) => {
     return (
         <div style={styles}>
-            <FloatingActionButton mini={true} onClick={() => scaleStage(-scaleStageFactor)}>
-                <ContentRemove />
-            </FloatingActionButton>
-            <FloatingActionButton mini={true} onClick={() => scaleStage(scaleStageFactor)}>
-                <ContentAdd />
-            </FloatingActionButton>
-            <FloatingActionButton secondary={true} mini={true} onClick={handleAddNewArrowPoint}>
-                <ContentAdd />
-            </FloatingActionButton>
+            <div style={floatingActionButtonStyles}>
+                <FloatingActionButton secondary={true} mini={true} onClick={handleAddNewArrowPoint}>
+                    <ContentAdd />
+                </FloatingActionButton>
+            </div>
+            <div style={floatingActionButtonStyles}>
+                <FloatingActionButton mini={true} onClick={() => scaleStage(scaleStageFactor)}>
+                    <ZoomIn />
+                </FloatingActionButton>
+            </div>
+            <div style={floatingActionButtonStyles}>
+                <FloatingActionButton disabled={scale.x < twiceScaleStageFactor || scale.y < twiceScaleStageFactor} mini={true} onClick={() => scaleStage(-scaleStageFactor)}>
+                    <ZoomOut />
+                </FloatingActionButton>
+            </div>
         </div>
-)}
+    )
+}
 
 export default TargetFaceControlBar;

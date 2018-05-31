@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
-import { Stage, Layer, Circle, Rect, Text, Group } from 'react-konva';
 import Konva from 'konva';
+import { Stage, Layer, Circle, Rect, Text, Group } from 'react-konva';
 
 import ArrowPoint from './ArrowPoint';
 import ArrowPointBar from './ArrowPointBar';
+import ArrowNumberSelectorBar from './ArrowNumberSelectorBar';
 import TargetFaceControlBar from './TargetFaceControlBar';
 import { getArrowPointWithValues } from './TargetFacePointDetection';
 
-import SelectField from 'material-ui/SelectField';
-import Paper from 'material-ui/Paper';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
 
 export default class TargetFace extends Component {
 
@@ -25,7 +22,7 @@ export default class TargetFace extends Component {
                 x: 1,
                 y: 1
             },
-            availableArrowNumbers: [1, 2, 3, 4, 5, 7, 12, 34],
+            availableArrowNumbers: [1, 2, 3, 4, 5, 7, 12, 34, 13, 123, 1234, 42],
             arrowPointsSelectedIndex: null
         };
 
@@ -37,6 +34,19 @@ export default class TargetFace extends Component {
         this.handleAddNewArrowPoint = this.handleAddNewArrowPoint.bind(this);
         this.handleArrowNumberSelected = this.handleArrowNumberSelected.bind(this);
         this.resize = this.resize.bind(this);
+    }
+
+    componentDidMount() {
+        this.resize();
+        window.addEventListener('resize', this.resize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.resize);
+    }
+
+    resize() {
+        this.setState({ width: window.innerWidth, height: window.innerHeight - 60 });
     }
 
     getTargetFace() {
@@ -84,6 +94,7 @@ export default class TargetFace extends Component {
             yPos: yPos,
             radius: 12,
             lineWidth: 1,
+            isEditMode: true
         };
 
         this.state.points.push(getArrowPointWithValues(this.state.targetFace, newArrowPoint));
@@ -95,26 +106,19 @@ export default class TargetFace extends Component {
         this.setState({ scale: newScale });
     }
 
-    componentDidMount() {
-        this.resize();
-        window.addEventListener('resize', this.resize);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.resize);
-    }
-
-    resize() {
-        this.setState({ width: window.innerWidth, height: window.innerHeight - 60 });
-    }
-
     handleArrowPointBarSelected(point) {
         point.isEditMode = !point.isEditMode;
         this.setState({ points: this.state.points });
     }
 
     handleAddNewArrowPoint() {
-        this.addNewArrowPoint(0, 0);
+        let stageX = (this.stageNode._stage.attrs.x || 0);
+        let stageY = (this.stageNode._stage.attrs.y || 0);
+        let scaleX = (this.stageNode._stage.attrs.scaleX || 1);
+        let scaleY = (this.stageNode._stage.attrs.scaleY || 1);
+        let widthMiddle = ((this.state.width / 2) - stageX) / scaleX;
+        let heightMiddle = ((this.state.height / 2) - stageY) / scaleY;
+        this.addNewArrowPoint(widthMiddle, heightMiddle);
     }
 
     handleStageElementClicked(e) {
@@ -139,8 +143,6 @@ export default class TargetFace extends Component {
     }
 
     render() {
-
-
         return (
             <div>
                 <Stage draggable={true}
@@ -148,8 +150,7 @@ export default class TargetFace extends Component {
                     scale={this.state.scale}
                     height={this.state.height}
                     width={this.state.width}
-                    ref={node => this.stageNode = node}
-                >
+                    ref={node => this.stageNode = node}>
                     <Layer>
                         <Group>
                             <Rect
@@ -178,38 +179,10 @@ export default class TargetFace extends Component {
                         {this.state.points.map((point, index) => <ArrowPoint key={index} point={point} pointIndex={index} handlePointChanged={this.handlePointChanged} />)}
                     </Layer>
                 </Stage>
-                <TargetFaceControlBar scaleStage={this.scaleStage} handleAddNewArrowPoint={this.handleAddNewArrowPoint} />
+                <TargetFaceControlBar scaleStage={this.scaleStage} handleAddNewArrowPoint={this.handleAddNewArrowPoint} scale={this.state.scale} />
                 <ArrowPointBar points={this.state.points} onArrowPointSelected={this.handleArrowPointBarSelected} />
                 <ArrowNumberSelectorBar availableArrowNumbers={this.state.availableArrowNumbers} arrowPointsSelectedIndex={this.state.arrowPointsSelectedIndex} handleArrowNumberSelected={this.handleArrowNumberSelected} />
             </div>
         );
     }
-}
-
-
-const ArrowNumberSelectorBar = ({ availableArrowNumbers, arrowPointsSelectedIndex, handleArrowNumberSelected }) => {
-
-    const paperStyles = {
-        display: 'inline-block',
-        margin: '16px 32px 16px 0',
-    };
-
-    const arrowNumberSelectorBarStyles = {
-        margin: 0,
-        top: 'auto',
-        bottom: 0,
-        left: 20,
-        position: 'fixed'
-    }
-
-    return (
-        arrowPointsSelectedIndex || arrowPointsSelectedIndex === 0 ?
-            <div style={arrowNumberSelectorBarStyles}>
-                <Paper style={paperStyles}>
-                    <Menu>
-                        {availableArrowNumbers.map(x => <MenuItem  key={x} onClick={() => handleArrowNumberSelected(x)} primaryText={'Arrow No: ' + x} />)}
-                        <MenuItem onClick={() => handleArrowNumberSelected(null)} primaryText={'Cancel'} />
-                    </Menu>
-                </Paper>
-            </div> : '');
 }
