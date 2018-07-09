@@ -16,11 +16,6 @@ const Dashboard = () => (
             <h1 className="App-title">Welcome to React</h1>
         </header>
 
-
-        {/* TODO investigate why those icons don't work? Probably because i'm missing a link  
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  
-  */}
         <FontIcon
             className="muidocs-icon-action-home"
             style={iconStyles}

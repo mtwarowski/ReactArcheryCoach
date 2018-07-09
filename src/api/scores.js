@@ -5,24 +5,22 @@ const getUserId = () => new AuthService().getUserId();
 
 const GetAllTournamentRounds = () => {     
     return database.ref('rounds').once('value');
-    // return Promise.resolve({
-    //     val: () => {
-    //         var array = [];
-    //         for (let i = 0; i < 10; i++) {
+}
 
-    //             array.push({
-    //                 name: "round " + i,
-    //                 key: i
-    //             });
-    //         }
+const GetScore = (id) => {     
+    return database.ref('userData/' + getUserId() + '/scores/' + id).once('value');
+}
 
-    //         return array;
-    //     }
-    // });
+const GetAllScore = () => {     
+    return database.ref('userData/' + getUserId() + '/scores/').once('value');
 }
 
 const Create = (score) => {
     return database.ref('userData/' + getUserId() + '/scores').push(score);
 }
 
-export default { GetAllTournamentRounds, Create };
+const Update = (id, score) => {
+    return database.ref('userData/' + getUserId() + '/scores').set(score);
+}
+
+export default { GetAllTournamentRounds, Create, GetScore, GetAllScore, Update };

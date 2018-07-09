@@ -53,6 +53,7 @@ const LeftDrawer = (props) => {
 
     const menus = [
         { text: 'Practices', icon: <Assessment/>, link: '/practices' },
+        { text: 'Scores', icon: <Web/>, link: '/scores' },
         { text: 'Bows', icon: <Web/>, link: '/bows' },
         { text: 'Arrows', icon: <Web/>, link: '/arrows' },
         // { text: 'Login Page', icon: <PermIdentity/>, link: '/login' }

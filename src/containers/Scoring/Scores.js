@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PaginationBar from '../../components/PaginationBar.js'
 import LinkFloatingActionButton from '../../components/Layout/LinkFloatingActionButton'
 
-// import {  } from '../../actions/scores'
+ import { loadScoresPageAsync } from '../../actions/scores'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -20,26 +20,36 @@ class Scores extends Component {
   }
 
   handleSelectedPageChanged = (pageNumber) => {
-    // this.props.loadParacticesPageAsync({
-    //   pageNumber: pageNumber,
-    //   pageSize: 20
-    // });
+    this.props.loadScoresPageAsync({
+      pageNumber: pageNumber,
+      pageSize: 20
+    });
   }
 
   render() {
-    return ('no ui');
+    return (
+      <div className="Scores">
+        <PaginationBar pageNumber={this.props.pageNumber} pageSize={this.props.pageSize} itemCount={this.props.itemCount} handleSelectedPageChanged={this.handleSelectedPageChanged} />
+        
+        <LinkFloatingActionButton url="/scores/new" />
+      </div>
+      );
   }
 }
 
 const mapStateToProps = (state, props) => {
   let newProps = {
     ...props,
+    pageSize: state.scores.page.pageSize,
+    pageNumber: state.scores.page.pageNumber,
+    itemCount: state.scores.page.itemCount,
+    scores: state.scores.page.data
   }
   return newProps;
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  
+  loadScoresPageAsync,
 }, dispatch)
 
 export default connect(

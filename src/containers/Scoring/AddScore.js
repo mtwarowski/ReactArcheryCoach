@@ -13,6 +13,9 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
 import AutoComplete from 'material-ui/AutoComplete';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import Snackbar from 'material-ui/Snackbar';
 
 const dataSourceConfig = {
   text: 'name',
@@ -28,13 +31,18 @@ class AddScore extends Component {
       scoreDate: new Date(),
       tournamentRound: undefined,
       bow: undefined,
-      arrowsSet: undefined
+      arrowsSet: undefined,
+      scoringType: undefined,
+
+      error: undefined,
+      showError: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleUpdateBowInput.bind(this);
     this.handleUpdateArrowsInput.bind(this);
     this.handleUpdateRoundInput.bind(this);
+    this.handleScoringTypeChange.bind(this);
   }
 
   componentDidMount() {
@@ -46,31 +54,74 @@ class AddScore extends Component {
   handleSubmit(event) {
     event.preventDefault();
 
+    let formError = this.getFormError();
+    if (formError) {
+      this.setState({ error: formError, showError: true });
+      return;
+    }
+
+
     this.props.addScoreAsync({
       name: this.state.scoreName,
-      // formatedTextDate: this.state.scoreDate,
       date: this.state.scoreDate,
       timeStamp: getUnixUtcTimeStamp(this.state.scoreDate),
       bow: this.state.bow,
-      arrowsSet: this.state.arrowsSet
+      arrowsSet: this.state.arrowsSet,
+      tournamentRound: this.state.tournamentRound,
+      scoringType: this.state.scoringType
     });
   }
 
-  handleUpdateBowInput(name){
+  getFormError() {
+
+    if (!this.state.scoreName) {
+      return "Name field is required";
+    }
+
+    if (!this.state.bow) {
+      return "Bow field is required";
+    }
+
+    if (!this.state.arrowsSet) {
+      return "Arrow set field is required";
+    }
+
+    if (!this.state.scoreDate) {
+      return "Date set field is required";
+    }
+
+    if (!this.state.tournamentRound) {
+      return "Tournament Round set field is required";
+    }
+
+    if (!this.state.scoringType) {
+      return "Scoring Type set field is required";
+    }
+
+    return undefined;
+  }
+
+  handleUpdateBowInput(name) {
     this.setState({
       bow: this.props.bows.filter(x => x.name === name)[0]
     });
   }
 
-  handleUpdateArrowsInput(name){
+  handleUpdateArrowsInput(name) {
     this.setState({
       arrowsSet: this.props.arrows.filter(x => x.name === name)[0]
     });
   }
-  handleUpdateRoundInput(name){
+
+  handleUpdateRoundInput(name) {
     this.setState({
       tournamentRound: this.props.tournamentRounds.filter(x => x.name === name)[0]
     });
+  }
+
+
+  handleScoringTypeChange(value) {
+    this.setState({ scoringType: value });
   }
 
   render() {
@@ -116,11 +167,29 @@ class AddScore extends Component {
                 disabled={!this.props.tournamentRounds || this.props.tournamentRounds.length === 0}
                 fullWidth={true} />
             </div>
+            <div>
+              <SelectField
+                fullWidth={true}
+                floatingLabelText="Type of Scoring"
+                value={this.state.scoringType}
+                onChange={(event, index, value) => this.handleScoringTypeChange(value)}>
+                <MenuItem value={'OnlyNumbers'} primaryText="Only numbers" />
+                <MenuItem value={'OnFace'} primaryText="On face" />
+                <MenuItem value={'OnFaceWithArrowNumbers'} primaryText="On face with arrow numbers" />
+              </SelectField>
+            </div>
           </CardText>
           <CardActions>
             <FlatButton type="submit" value="Submit" label="Submit" />
           </CardActions>
         </Card>
+
+        <Snackbar
+          open={this.state.showError}
+          message={this.state.error}
+          autoHideDuration={1500}
+          onRequestClose={() => this.setState({ showError: false, error: undefined })}
+        />
       </form>
     );
   }

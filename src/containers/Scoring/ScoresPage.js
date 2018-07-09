@@ -11,7 +11,7 @@ const ScoresPage = () => (
     <Switch>
       <PrivateRoute exact path='/scores/' component={Scores} />
       <PrivateRoute path='/scores/New' component={AddScore} />
-      <PrivateRoute path='/scores/{id}' component={EditScore} />
+      <PrivateRoute path='/scores/:id' component={EditScore} />
     </Switch>
 )
 
