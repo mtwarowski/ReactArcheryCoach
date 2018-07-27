@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import { loadParacticesPageAsync } from '../../actions/practices'
+import { loadPracticesPageAsync } from '../../actions/practices'
 
 import PracticesCards from './PracticesCards'
 import PaginationBar from '../../components/PaginationBar.js'
@@ -22,7 +22,7 @@ class Practices extends Component {
   }
 
   handleSelectedPageChanged = (pageNumber) => {
-    this.props.loadParacticesPageAsync({
+    this.props.loadPracticesPageAsync({
       pageNumber: pageNumber,
       pageSize: 20
     });
@@ -51,7 +51,7 @@ const mapStateToProps = (state, props) => {
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  loadParacticesPageAsync
+  loadPracticesPageAsync
 }, dispatch)
 
 export default connect(

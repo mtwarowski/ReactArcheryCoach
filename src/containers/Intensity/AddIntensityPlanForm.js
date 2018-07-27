@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import HttpHelpers from '../../Auth/HttpHelpers';
-import Config from '../../Config'
-import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import { Card, CardText } from 'material-ui/Card';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
-import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-import DatePicker from 'material-ui/DatePicker';
 import { RaisedButton } from 'material-ui';
 
 export default class AddIntensityPlanForm extends Component {

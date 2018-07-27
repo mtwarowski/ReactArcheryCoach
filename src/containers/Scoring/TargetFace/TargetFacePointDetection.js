@@ -12,6 +12,8 @@ export const getArrowPointWithValues = (targetFace, arrowPoint) => {
                 console.log(JSON.stringify(targetRing));
                 pointValue.displayValue = targetRing.displayValue;
                 pointValue.value = targetRing.value;
+                pointValue.backgroundColor = targetRing.backgroundColor;
+                pointValue.lineColor = targetRing.lineColor;
                 return { ...arrowPoint, ...pointValue }
             }
         }

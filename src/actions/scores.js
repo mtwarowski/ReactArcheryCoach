@@ -21,6 +21,11 @@ export const GETALL_SCORES_REQUESTED = 'SCORES/GETALL_REQUESTED'
 export const GETALL_SCORES_LOADED = 'SCORES/GETALL_LOADED'
 export const GETALL_SCORES_ERROR = 'SCORES/GETALL_ERROR'
 
+export const GETPAGE_SCORES_REQUESTED = 'SCORES/GETPAGE_REQUESTED'
+export const GETPAGE_SCORES_LOADED = 'SCORES/GETPAGE_LOADED'
+export const GETPAGE_SCORES_ERROR = 'SCORES/GETPAGE_ERROR'
+
+
 export const loadTournamentRoundsAsync = () => {
     return dispatchFirebaseAsync(() => scoresApi.GetAllTournamentRounds(),
         {
@@ -42,11 +47,11 @@ export const loadScoreByIdAsync = (id) => {
 }
 
 export const loadScoresPageAsync = (pageInfo) => {
-    return dispatchFirebaseAsync(() => scoresApi.GetAllScore(),
+    return dispatchFirebaseAsync(() => scoresApi.GetPage(pageInfo.pageNumber, pageInfo.pageSize),
         {
-            ON_REQUESTED_TYPE: GETALL_SCORES_REQUESTED, 
-            ON_LOADED_TYPE: GETALL_SCORES_LOADED,
-            ON_ERROR_TYPE: GETALL_SCORES_ERROR
+            ON_REQUESTED_TYPE: GETPAGE_SCORES_REQUESTED, 
+            ON_LOADED_TYPE: GETPAGE_SCORES_LOADED,
+            ON_ERROR_TYPE: GETPAGE_SCORES_ERROR
         }        
     );
 }
@@ -74,4 +79,4 @@ export const updateScoreAsync = (id, score) => {
     );
 }
 
-export default {loadTournamentRoundsAsync, addScoreAsync, loadScoresPageAsync};
+export default {loadTournamentRoundsAsync, addScoreAsync, loadScoresPageAsync, updateScoreAsync};

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import { addParacticeAsync } from '../../actions/practices'
+import { addPracticeAsync } from '../../actions/practices'
 import { getUnixUtcTimeStamp } from '../../helpers/datetime'
 
 import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
@@ -30,7 +30,7 @@ class AddPractice extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    this.props.addParacticeAsync({
+    this.props.addPracticeAsync({
       name: this.state.practiceName,
       comment: this.state.practiceComment,
       practiceDateTimeStamp: getUnixUtcTimeStamp(this.state.practiceDate),
@@ -123,7 +123,7 @@ const mapStateToProps = (state, props) => {
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  addParacticeAsync,
+  addPracticeAsync,
 }, dispatch)
 
 export default connect(

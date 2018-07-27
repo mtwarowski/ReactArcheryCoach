@@ -23,7 +23,7 @@ export const DELETE_PRACTICES_ERROR = 'practices/DELETE_ERRORPAGE'
 //     );
 // }
 
-export const loadParacticesPageAsync = ({pageNumber, pageSize}) => {
+export const loadPracticesPageAsync = ({pageNumber, pageSize}) => {
     return dispatchFirebaseAsync(() => practicesApi.GetPage(pageNumber, pageSize),
         {
             ON_REQUESTED_TYPE: GETPAGE_PRACTICES_REQUESTED, 
@@ -43,7 +43,7 @@ export const deletePracticeByIdAsync = (practiceId) => {
     );
 }
 
-export const addParacticeAsync = (practice) => {
+export const addPracticeAsync = (practice) => {
     return dispatchApiAsync(() => practicesApi.Create(practice),
         {
             ON_REQUESTED_TYPE: DELETE_PRACTICES_REQUESTED, 

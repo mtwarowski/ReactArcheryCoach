@@ -72,6 +72,28 @@ const scores = (state = initialState, action) => {
                 isSaving: false
             }
 
+            case scoresActions.GETPAGE_SCORES_REQUESTED:
+            return {
+                ...state,
+                page: {},
+                isLoading: true
+            }
+
+        case scoresActions.GETPAGE_SCORES_LOADED:
+            return {
+                ...state,
+                page: action.data,
+                isLoading: false
+            }
+
+        case scoresActions.GETPAGE_SCORES_ERROR:
+            return {
+                ...state,
+                error: action.error,
+                page: {},
+                isLoading: false
+            }
+
         default:
             return state
     }

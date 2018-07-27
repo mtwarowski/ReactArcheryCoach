@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
 import { Stage, Layer, Circle, Rect, Text, Group } from 'react-konva';
-import Konva from 'konva';
+
+const fillColor = '#A9A9A9';
+const strokeColor = '#A9A9A9';
 
 export default class ArrowPoint extends Component {
+    
+
     getEditModeView = () => {
         const arrowPointStrokeWidth = this.props.point.lineWidth || 1;
         const arrowPointRadius = this.props.point.radius || 6;
+        const arrowPointTotalRadius = arrowPointRadius + (arrowPointStrokeWidth / 2);
+        const movePadStrokeWidth = arrowPointTotalRadius * 4;
         return (
             <Group ref={(node) => this.groupNode = node}
                 draggable={true}
@@ -19,10 +25,10 @@ export default class ArrowPoint extends Component {
                     draggable={true}
                     x={this.props.point.xPos}
                     y={this.props.point.yPos}
-                    radius={arrowPointRadius + (arrowPointStrokeWidth / 2)}
+                    radius={arrowPointTotalRadius}
                     stroke={'rgba(255, 255, 0, 0.5)'}
-                    fill={'grey'}
-                    strokeWidth={50} />
+                    fill={fillColor}
+                    strokeWidth={movePadStrokeWidth} />
             </Group>);
     }
     
@@ -35,8 +41,8 @@ export default class ArrowPoint extends Component {
                     x={this.props.point.xPos}
                     y={this.props.point.yPos}
                     radius={arrowPointRadius}
-                    fill={'grey'}
-                    stroke={'grey'}
+                    fill={fillColor}
+                    stroke={strokeColor}
                     strokeWidth={arrowPointStrokeWidth}
                     onClick={() => this.props.handlePointChanged({ ...this.props.point, isEditMode: !this.props.point.isEditMode }, this.props.pointIndex)} />
             </Group>);

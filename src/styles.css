@@ -41,3 +41,9 @@ a:hover {
   left: 'auto';
   position: 'fixed'
 }
+
+.mainContainer {
+  margin-Top: 10px;
+  margin-Left: 20px;
+  margin-Right: 20px;
+}

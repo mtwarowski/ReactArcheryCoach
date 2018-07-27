@@ -8,7 +8,7 @@ import PracticesPage from '../Practicing/PracticesPage';
 import ScoresPage from '../Scoring/ScoresPage';
 import EquipmentPage from '../Equipment/EquipmentPage';
 import AddIntensityPlanForm from '../Intensity/AddIntensityPlanForm';
-import TargetFace from '../Scoring/TargetFace/TargetFace';
+import TargetFace from '../Scoring/TargetFace';
 
 const Main = () => (
     <main>

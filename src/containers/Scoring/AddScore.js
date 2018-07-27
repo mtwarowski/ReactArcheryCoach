@@ -174,6 +174,7 @@ class AddScore extends Component {
                 value={this.state.scoringType}
                 onChange={(event, index, value) => this.handleScoringTypeChange(value)}>
                 <MenuItem value={'OnlyNumbers'} primaryText="Only numbers" />
+                <MenuItem value={'OnlyNumbersWithArrowNumbers'} primaryText="Only numbers with arrow numbers" />
                 <MenuItem value={'OnFace'} primaryText="On face" />
                 <MenuItem value={'OnFaceWithArrowNumbers'} primaryText="On face with arrow numbers" />
               </SelectField>

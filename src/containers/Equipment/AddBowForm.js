@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import Config from '../../Config'
-import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+
+import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-import DatePicker from 'material-ui/DatePicker';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import Avatar from 'material-ui/Avatar';
 
+import {navigateTo} from '../../helpers/navigation'
 import HttpHelpers from '../../Auth/HttpHelpers';
-import firebase, { database } from '../../Auth/firebase.js';
+import { database } from '../../Auth/firebase.js';
 import AuthService from '../../Auth/AuthService';
 
 import MultiRowSelector from '../../components/MultiRowSelector';
+
+import ImagePicker from '../../components/ImagePicker'
 
 class AddBowForm extends Component {
 
@@ -106,7 +106,7 @@ class AddBowForm extends Component {
             sightMarks: this.state.sightMarkRows.map((row) => ({ distance: row.label, value: row.value }))
         }).then(function () {
             this.clearState();
-            this.props.history.push('/bows/');
+            navigateTo(`./bows/`);
         }.bind(this)).catch(function (error) {
             console.error('Error writing new message to Firebase Database', error);
         });
@@ -166,53 +166,3 @@ class AddBowForm extends Component {
     }
 }
 export default AddBowForm;
-
-
-export class ImagePicker extends Component{
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            imageName: this.props.label || 'Choose an Image',      
-        };
-        this.handleOnImageSelected = this.handleOnImageSelected.bind(this);
-    }
-
-    handleOnImageSelected(e) {
-
-        let reader = new FileReader();
-        let file = e.target.files[0];
-
-        if (file) {
-            reader.onloadend = () => this.setState({ file: file, image: reader.result, imageName: file.name }, () => this.props.handleImageDataSelected(this.state));
-            reader.readAsDataURL(file);
-        }
-    }
-
-    render(){    
-        const styles = {
-            uploadButton: {
-                verticalAlign: 'middle',
-            },
-            uploadInput: {
-                cursor: 'pointer',
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                right: 0,
-                left: 0,
-                width: '100%',
-                opacity: 0,
-            },
-        };
-        return (
-            <FlatButton fullWidth={true}
-                label={this.state.imageName}// "Choose an Image"
-                labelPosition="before"
-                style={styles.uploadButton}
-                containerElement="label">
-                <input type="file" style={styles.uploadInput} onChange={this.handleOnImageSelected} />
-            </FlatButton>
-        );
-    }
-}
