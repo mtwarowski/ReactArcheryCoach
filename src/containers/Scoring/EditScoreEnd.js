@@ -165,10 +165,10 @@ class EditScoreEnd extends Component {
                 </div>
             ),
             OnFace: (
-                <TargetFace arrowsSet={null} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} />
+                <TargetFace arrowsSet={this.props.arrowsSet} withArrowNumbers={false} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} />
             ),
             OnFaceWithArrowNumbers: (
-                <TargetFace arrowsSet={this.props.arrowsSet} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} />
+                <TargetFace arrowsSet={this.props.arrowsSet} withArrowNumbers={true} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} />
             ),
             default: (
                 <div>This scoring is in invalid format. Please try to create a new one.</div>

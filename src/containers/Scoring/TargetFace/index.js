@@ -81,7 +81,7 @@ export class TargetFace extends Component {
         let newArrowPoint = {
             xPos: xPos,
             yPos: yPos,
-            radius: (this.props.arrowsSet.diameterInMm / 10) - defaultArrowLineWidth / 2, //since it's in mm and out target is measured in cm - stroke 1/2 
+            radius: (this.props.arrowsSet.diameterInMm / 2 / 10) - defaultArrowLineWidth / 2, //since it's in mm and out target is measured in cm - stroke 1/2 
             lineWidth: defaultArrowLineWidth,
             isEditMode: true
         };
@@ -186,7 +186,7 @@ export class TargetFace extends Component {
                 </Stage>
                 <TargetFaceControlBar scaleStage={this.scaleStage} handleAddNewArrowPoint={this.handleAddNewArrowPoint} scale={this.state.scale} />
                 <ArrowPointBar points={this.props.end} onArrowPointSelected={this.handleArrowPointBarSelected} onArrowPointRemove={this.handleArrowPointBarRemove} />
-                {this.props.arrowsSet && <ArrowNumberSelectorBar availableArrowNumbers={this.getAvailableArrowNumbers()} arrowPointsSelectedIndex={this.state.arrowPointsSelectedIndex} handleArrowNumberSelected={this.handleArrowNumberSelected} />}
+                {this.props.withArrowNumbers && <ArrowNumberSelectorBar availableArrowNumbers={this.getAvailableArrowNumbers()} arrowPointsSelectedIndex={this.state.arrowPointsSelectedIndex} handleArrowNumberSelected={this.handleArrowNumberSelected} />}
             </div>
             : 'Select target that you want to shoot.'
         );

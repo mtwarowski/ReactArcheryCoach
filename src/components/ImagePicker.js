@@ -6,7 +6,7 @@ export default class ImagePicker extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            imageName: this.props.label || 'Choose an Image',      
+            imageName: this.props.label || 'Choose an Image',  
         };
         this.handleOnImageSelected = this.handleOnImageSelected.bind(this);
     }

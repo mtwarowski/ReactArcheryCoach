@@ -29,7 +29,7 @@ export class Header extends Component {
         return (
             <div>
                 <AppBar style={{ ...styles, ...style.appBar }}
-                    title={<span>Archery Coach</span>}
+                    title={<span>We Score!</span>}
                     onTitleClick={handleChangeRequestNavDrawer}
                     iconElementLeft={<IconButton style={style.menuButton} onClick={handleChangeRequestNavDrawer}><Menu /></IconButton>}
                     iconElementRight={<div style={style.iconsRightContainer}><Login /></div>}>

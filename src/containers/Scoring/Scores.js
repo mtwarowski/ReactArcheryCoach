@@ -62,10 +62,10 @@ class Scores extends Component {
               <div key={score.id} className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
                 <Card style={styles.card}>
                   <CardHeader
-                    title={score.name}
-                    subtitle={score.timeStamp}
+                    title={'of ' + score.maxValue}
+                    subtitle={getTimeTextFromTimeSpam(score.timeStamp)}
                     avatar={
-                      <Avatar>{score.totalValue}</Avatar>
+                      <Avatar>{score.currentValue}</Avatar>
                     }/>
                   <CardText>
                     <div><span>{score.name} {getTimeTextFromTimeSpam(score.timeStamp)}</span></div>

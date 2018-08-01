@@ -40,7 +40,7 @@ export default class AddArrowForm extends Component {
             shaftType: '',
             nocks: '',
             amoLengthInCm: 75,
-            diameterInMm: 50,
+            diameterInMm: 5,
             labels: this.getDefaultLabels(),
 
             image: '',

@@ -7,6 +7,7 @@ import { loadArrowsAsync, loadBowsAsync } from '../../actions/equipment'
 import { loadTournamentRoundsAsync, addScoreAsync } from '../../actions/scores'
 
 import { getUnixUtcTimeStamp } from '../../helpers/datetime'
+import { getMaxTournamentRoundScore } from '../../helpers/points'
 
 import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
@@ -34,8 +35,10 @@ class AddScore extends Component {
       arrowsSet: undefined,
       scoringType: undefined,
 
-      error: undefined,
-      showError: false
+      error: "",
+      showError: false,
+
+      tournamentRounds: []
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -49,6 +52,15 @@ class AddScore extends Component {
     this.props.bowName || this.props.loadBowsAsync();
     this.props.arrowsName || this.props.loadArrowsAsync();
     this.props.tournamentRounds || this.props.loadTournamentRoundsAsync();
+
+    if(this.props.tournamentRounds){
+      this.setState({tournamentRounds: this.props.tournamentRounds});
+    }
+  }
+  componentDidUpdate(prevProps) {
+    if(this.props.tournamentRounds !== prevProps.tournamentRounds){
+      this.setState({tournamentRounds: this.props.tournamentRounds});
+    }
   }
 
   handleSubmit(event) {
@@ -60,7 +72,6 @@ class AddScore extends Component {
       return;
     }
 
-
     this.props.addScoreAsync({
       name: this.state.scoreName,
       date: this.state.scoreDate,
@@ -68,9 +79,14 @@ class AddScore extends Component {
       bow: this.state.bow,
       arrowsSet: this.state.arrowsSet,
       tournamentRound: this.state.tournamentRound,
-      scoringType: this.state.scoringType
+      scoringType: this.state.scoringType,
+      currentValue: 0,
+      maxValue: getMaxTournamentRoundScore(this.state.tournamentRound),
     });
   }
+
+
+
 
   getFormError() {
 
@@ -149,7 +165,7 @@ class AddScore extends Component {
             </div>
             <div>
               <AutoComplete floatingLabelText="Arrows"
-                filter={AutoComplete.noFilter}
+                filter={AutoComplete.fuzzyFilter}
                 onUpdateInput={(value) => this.handleUpdateArrowsInput(value)}
                 dataSourceConfig={dataSourceConfig}
                 dataSource={this.props.arrows || []}
@@ -159,14 +175,14 @@ class AddScore extends Component {
             </div>
             <div>
               <AutoComplete floatingLabelText="Rounds"
-                filter={AutoComplete.noFilter}
+                filter={AutoComplete.fuzzyFilter}
                 onUpdateInput={(value) => this.handleUpdateRoundInput(value)}
                 dataSourceConfig={dataSourceConfig}
                 dataSource={this.props.tournamentRounds || []}
                 openOnFocus={true}
                 disabled={!this.props.tournamentRounds || this.props.tournamentRounds.length === 0}
                 fullWidth={true} />
-            </div>
+            </div>            
             <div>
               <SelectField
                 fullWidth={true}

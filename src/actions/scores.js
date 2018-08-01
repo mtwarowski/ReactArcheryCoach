@@ -1,5 +1,7 @@
 import scoresApi from '../api/scores'
 import { dispatchFirebaseAsync, dispatchFirebaseSaveAsync } from './common'
+import { getCurrentTournamentRoundScore } from '../helpers/points'
+import { navigateTo } from '../helpers/navigation'
 
 export const GETALL_TOURNAMENTROUNDS_REQUESTED = 'tournamentRounds/GETALL_REQUESTED'
 export const GETALL_TOURNAMENTROUNDS_LOADED = 'tournamentRounds/GETALL_LOADED'
@@ -57,6 +59,7 @@ export const loadScoresPageAsync = (pageInfo) => {
 }
 
 export const addScoreAsync = (score) => {
+    score.currentValue = getCurrentTournamentRoundScore(score.results);
     return dispatchFirebaseSaveAsync(() => scoresApi.Create(score),
         {
             ON_REQUESTED_TYPE: CREATE_SCORES_REQUESTED, 
@@ -64,18 +67,19 @@ export const addScoreAsync = (score) => {
             ON_ERROR_TYPE: CREATE_SCORES_ERROR
         },
         (result) => { 
-            window.location.href = window.location.origin + '/scores/' + result.data;
+            navigateTo(`./scores/${result.data}`);
         }     
     );
 }
 
 export const updateScoreAsync = (id, score) => {
+    score.currentValue = getCurrentTournamentRoundScore(score.results);
     return dispatchFirebaseAsync(() => scoresApi.Update(id, score),
         {
             ON_REQUESTED_TYPE: UPDATE_SCORES_REQUESTED, 
             ON_LOADED_TYPE: UPDATE_SCORES_LOADED,
             ON_ERROR_TYPE: UPDATE_SCORES_ERROR
-        }        
+        }
     );
 }
 

@@ -3,7 +3,7 @@ import React from 'react';
 import FontIcon from 'material-ui/FontIcon';
 import { blue500, red500, greenA200 } from 'material-ui/styles/colors';
 
-import logo from '../../logo.svg';
+import logo from '../../logo.png';
 
 const iconStyles = {
     marginRight: 24,
@@ -11,28 +11,10 @@ const iconStyles = {
 
 const Dashboard = () => (
     <div className="App">
-        <header className="App-header">
+        <header>
             <img src={logo} className="App-logo" alt="logo" />
-            <h1 className="App-title">Welcome to React</h1>
+            <h1 className="App-title">You shoot <span className="App-name">We Score!</span></h1>
         </header>
-
-        <FontIcon
-            className="muidocs-icon-action-home"
-            style={iconStyles}
-        />
-
-        <FontIcon
-            className="muidocs-icon-action-home"
-            style={iconStyles}
-            color={blue500}
-        />
-
-        <FontIcon
-            className="muidocs-icon-action-home"
-            style={iconStyles}
-            color={red500}
-            hoverColor={greenA200}
-        />
     </div>
 )
 

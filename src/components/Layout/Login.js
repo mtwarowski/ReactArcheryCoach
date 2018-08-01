@@ -16,7 +16,7 @@ class Login extends Component {
   componentDidMount() {
     this.setState({ 
       isUserLoggedIn: this.auth.loggedIn()
-    });    
+    });
   }
   
   login() {
@@ -32,13 +32,14 @@ class Login extends Component {
   }
   
   render() {
+    const token = this.auth.getToken();
+    const isLoggedIn = token && this.auth.isTokenExpired(token); 
     return (
-        this.state.isUserLoggedIn ?
-        <FlatButton onClick={this.logout}>Log Out</FlatButton>                
-        :
-        <FlatButton onClick={this.login}>Log In</FlatButton>
+//      this.state.isUserLoggedIn ?
+        isLoggedIn ? <FlatButton onClick={this.logout}>Log Out</FlatButton>                
+        : <FlatButton onClick={this.login}>Log In</FlatButton>
     );
   }
 }
-export default Login;
 
+export default Login;
