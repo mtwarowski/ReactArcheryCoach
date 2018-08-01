@@ -4,8 +4,6 @@ import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import { database } from '../../Auth/firebase.js';
-import AuthService from '../../Auth/AuthService';
-
 import {navigateTo} from '../../helpers/navigation'
 import ImagePicker from '../../components/ImagePicker'
 
@@ -26,7 +24,6 @@ export default class AddArrowForm extends Component {
             image: '',
             imageName: 'Choose an Image',       
         };
-        this.authService = new AuthService();
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleOnImageSelected = this.handleOnImageSelected.bind(this);

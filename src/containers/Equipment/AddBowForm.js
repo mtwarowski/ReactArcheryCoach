@@ -7,9 +7,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
 import {navigateTo} from '../../helpers/navigation'
-import HttpHelpers from '../../Auth/HttpHelpers';
 import { database } from '../../Auth/firebase.js';
-import AuthService from '../../Auth/AuthService';
 
 import MultiRowSelector from '../../components/MultiRowSelector';
 
@@ -48,8 +46,6 @@ class AddBowForm extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleOnImageSelected = this.handleOnImageSelected.bind(this);
         this.handleSelectedBowTypeChange = this.handleSelectedBowTypeChange.bind(this);
-
-        this.authService = new AuthService();
     }
 
     clearState() {

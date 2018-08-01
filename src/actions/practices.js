@@ -1,5 +1,5 @@
 import practicesApi from '../api/practices'
-import { dispatchApiAsync, dispatchFirebaseAsync } from './common'
+import { dispatchFirebaseAsync } from './common'
 
 export const GETPAGE_PRACTICES_REQUESTED = 'practices/GETPAGE_REQUESTED'
 export const GETPAGE_PRACTICES_LOADED = 'practices/GETPAGE_LOADED'
@@ -34,7 +34,7 @@ export const loadPracticesPageAsync = ({pageNumber, pageSize}) => {
 }
 
 export const deletePracticeByIdAsync = (practiceId) => {
-    return dispatchApiAsync(() => practicesApi.Delete(practiceId),
+    return dispatchFirebaseAsync(() => practicesApi.Delete(practiceId),
         {
             ON_REQUESTED_TYPE: DELETE_PRACTICES_REQUESTED, 
             ON_LOADED_TYPE: DELETE_PRACTICES_LOADED, 
@@ -44,7 +44,7 @@ export const deletePracticeByIdAsync = (practiceId) => {
 }
 
 export const addPracticeAsync = (practice) => {
-    return dispatchApiAsync(() => practicesApi.Create(practice),
+    return dispatchFirebaseAsync(() => practicesApi.Create(practice),
         {
             ON_REQUESTED_TYPE: DELETE_PRACTICES_REQUESTED, 
             ON_LOADED_TYPE: DELETE_PRACTICES_LOADED, 

@@ -1,8 +1,7 @@
 
 import { database } from '../Auth/firebase.js';
-import AuthService from '../Auth/AuthService';
+import { getUserId } from '../Auth/AuthService';
 
-const getUserId = () => new AuthService().getUserId();
 
 export const GetArrows = () => {
     return database.ref('userData/' + getUserId() + '/arrows').once('value');

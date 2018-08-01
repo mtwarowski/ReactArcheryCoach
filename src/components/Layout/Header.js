@@ -4,7 +4,7 @@ import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import Menu from 'material-ui/svg-icons/navigation/menu';
 
-import Login from '../../components/Layout/Login';
+import LoginHeaderMenu from '../../components/Layout/LoginHeaderMenu';
 
 export class Header extends Component {
 
@@ -32,7 +32,7 @@ export class Header extends Component {
                     title={<span>We Score!</span>}
                     onTitleClick={handleChangeRequestNavDrawer}
                     iconElementLeft={<IconButton style={style.menuButton} onClick={handleChangeRequestNavDrawer}><Menu /></IconButton>}
-                    iconElementRight={<div style={style.iconsRightContainer}><Login /></div>}>
+                    iconElementRight={<div style={style.iconsRightContainer}><LoginHeaderMenu /></div>}>
                 </AppBar>
             </div>
         )

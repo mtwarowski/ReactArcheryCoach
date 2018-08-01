@@ -1,9 +1,6 @@
 import { database } from '../Auth/firebase.js';
-import AuthService from '../Auth/AuthService';
-
+import { getUserId } from '../Auth/AuthService';
 import { mapFirebaseObjectToArray } from '../helpers/dataMapping';
-
-const getUserId = () => new AuthService().getUserId();
 
 const GetAllTournamentRounds = () => {     
     return database.ref('tournamentRounds').once('value');

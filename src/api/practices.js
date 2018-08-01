@@ -1,40 +1,6 @@
-import { getCall, deleteCall, postCall } from './common'
-
-import { mapFirebaseObjectToArray } from '../helpers/dataMapping';
-
 import { database } from '../Auth/firebase.js';
-import AuthService from '../Auth/AuthService';
-
-const getUserId = () => new AuthService().getUserId();
-
-
-const fakeGetPage = (pageNumber, pageSize) => {
-    let promise = Promise.resolve({
-        json: () => {
-            return {
-                pageNumber: pageNumber,
-                pageSize: pageSize,
-                itemCount: pageNumber * pageSize * 10,
-                data: fakePractices(pageSize, pageNumber)
-            };
-        }
-    });
-
-    return promise;
-}
-
-const fakePractices = (quantity, pageNumber) => {
-    var data = [];
-    for (let indexNo = 1; indexNo <= quantity; indexNo++) {
-        data.push({
-            id: indexNo,
-            name: 'Practice no ' + indexNo,
-            totalValue: 100 * pageNumber,
-            practiceDateTimeStamp: 1000 * indexedDB
-        });
-    }
-    return data;
-}
+import { getUserId } from '../Auth/AuthService';
+import { mapFirebaseObjectToArray } from '../helpers/dataMapping';
 
 const GetPage = (pageNumber, pageSize) => {
 
@@ -42,9 +8,8 @@ const GetPage = (pageNumber, pageSize) => {
 
         const numberOfItems = snapshot.numChildren();
 
-        let at = numberOfItems - (pageNumber * (pageSize + 1));
-
-        return database.ref('userData/' + getUserId() + '/practices').orderByChild('practiceDateTimeStamp').endAt(at).limitToLast(pageSize).once('value')
+        let at = (pageSize * pageNumber) - pageSize + 1;
+        return database.ref('userData/' + getUserId() + '/practices').orderByChild('practiceDateTimeStamp').startAt(at).limitToFirst(pageSize).once('value')
             .then((data) => {
                 return Promise.resolve({
                     val: () => {
@@ -58,30 +23,24 @@ const GetPage = (pageNumber, pageSize) => {
                 });
             });
     });
-
-    //return fakeGetPage(pageNumber, pageSize);    
-
-    //return getCall(`${window.env.api}/api/practices/pagination?pageNumber=${pageNumber}&pageSize=${pageSize}`);
 }
 
 const Delete = (practiceId) => {
-    return Promise.resolve({
-        json: () => {
-            return { practiceId: practiceId };
-        }
+    return database.ref(`userData/${getUserId()}/practices/${practiceId}`).remove().then(() => {
+        return Promise.resolve({
+            val: () => {
+                return { practiceId: practiceId };
+            }
+        });
     });
-    //return deleteCall(`${window.env.api}/api/practices/${practiceId}`);
 }
-
 
 const Create = (practice) => {
-    return Promise.resolve({
-        json: () => {
-            return { practice: practice };
-        }
-    });
-    //return postCall(`${window.env.api}/api/practices/${practiceId}`, practice);
+    return database.ref(`userData/${getUserId()}/practices/`).push(practice);
 }
 
+const Update = (id, practice) => {
+    return database.ref(`userData/${getUserId()}/practices/${id}/`).set(practice);
+}
 
-export default { GetPage, Delete, Create };
+export default { GetPage, Delete, Create, Update };
