@@ -1,5 +1,6 @@
 import practicesApi from '../api/practices'
 import { dispatchFirebaseAsync } from './common'
+import { navigateTo } from '../helpers/navigation'
 
 export const GETPAGE_PRACTICES_REQUESTED = 'practices/GETPAGE_REQUESTED'
 export const GETPAGE_PRACTICES_LOADED = 'practices/GETPAGE_LOADED'
@@ -46,12 +47,9 @@ export const deletePracticeByIdAsync = (practiceId) => {
 export const addPracticeAsync = (practice) => {
     return dispatchFirebaseAsync(() => practicesApi.Create(practice),
         {
-            ON_REQUESTED_TYPE: DELETE_PRACTICES_REQUESTED, 
-            ON_LOADED_TYPE: DELETE_PRACTICES_LOADED, 
-            ON_ERROR_TYPE: DELETE_PRACTICES_ERROR
-        },
-        () => { 
-            window.location.href = window.location.origin + '/practices';
-        }
-    );
+            ON_REQUESTED_TYPE: ADD_PRACTICES_REQUESTED, 
+            ON_LOADED_TYPE: ADD_PRACTICES_LOADED, 
+            ON_ERROR_TYPE: ADD_PRACTICES_ERROR
+        }, () => navigateTo('./practices')
+     );
 }

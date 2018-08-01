@@ -66,9 +66,9 @@ export const addScoreAsync = (score) => {
             ON_LOADED_TYPE: CREATE_SCORES_LOADED, 
             ON_ERROR_TYPE: CREATE_SCORES_ERROR
         },
-        (result) => { 
+        (result) =>{
             navigateTo(`./scores/${result.data}`);
-        }     
+        }  
     );
 }
 

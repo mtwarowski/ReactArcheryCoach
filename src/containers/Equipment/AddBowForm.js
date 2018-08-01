@@ -109,21 +109,6 @@ class AddBowForm extends Component {
     }
 
     render() {
-        const styles = {
-            uploadButton: {
-                verticalAlign: 'middle',
-            },
-            uploadInput: {
-                cursor: 'pointer',
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                right: 0,
-                left: 0,
-                width: '100%',
-                opacity: 0,
-            },
-        };
         return (
             <form onSubmit={this.handleSubmit}>
                 <Card>

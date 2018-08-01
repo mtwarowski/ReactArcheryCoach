@@ -1,5 +1,4 @@
 import equipmentApi from '../api/equipment'
-import arrowsApi from '../api/arrows'
 import { dispatchFirebaseAsync } from './common'
 
 export const GET_BOWS_DEFAULT_REQUESTED = 'equipment/bows/GETDEFAULT_REQUESTED'

@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 
 import { getTimeTextFromTimeSpam } from '../../helpers/datetime'
 
-import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
+import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card';
 import IconButton from 'material-ui/IconButton/IconButton';
 import Delete from 'material-ui/svg-icons/action/delete';
 import Edit from 'material-ui/svg-icons/image/edit';

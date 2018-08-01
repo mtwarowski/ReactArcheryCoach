@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Stage, Layer, Circle, Rect, Text, Group } from 'react-konva';
+import { Circle, Group } from 'react-konva';
 
 const fillColor = '#A9A9A9';
 const strokeColor = '#A9A9A9';

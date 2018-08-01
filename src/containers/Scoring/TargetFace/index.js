@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-// import Konva from 'konva';
-import { Stage, Layer, Circle, Rect, Text, Group } from 'react-konva'
+
+import { Stage, Layer, Circle, Rect, Group } from 'react-konva'
 
 import ArrowPoint from './ArrowPoint'
 import ArrowPointBar from './EndPointBar'
@@ -65,7 +65,7 @@ export class TargetFace extends Component {
         for (let pointIndex = 0; pointIndex < this.props.end.length; pointIndex++) {
             const point = this.props.end[pointIndex];
 
-            if (point.arrowNo == label) {
+            if (point.arrowNo === label) {
                 return false;
             }
         }
@@ -144,6 +144,7 @@ export class TargetFace extends Component {
         return targetRings.sort((a, b) => {
             if (a.radius < b.radius) return 1;
             if (a.radius > b.radius) return -1;
+            return 0;
         });
     }
 
