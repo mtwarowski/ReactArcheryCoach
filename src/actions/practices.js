@@ -1,5 +1,5 @@
 import practicesApi from '../api/practices'
-import { dispatchFirebaseAsync } from './common'
+import { dispatchFirebaseAsync, dispatchFirebaseSaveAsync } from './common'
 import { navigateTo } from '../helpers/navigation'
 
 export const GETPAGE_PRACTICES_REQUESTED = 'practices/GETPAGE_REQUESTED'
@@ -45,7 +45,7 @@ export const deletePracticeByIdAsync = (practiceId) => {
 }
 
 export const addPracticeAsync = (practice) => {
-    return dispatchFirebaseAsync(() => practicesApi.Create(practice),
+    return dispatchFirebaseSaveAsync(() => practicesApi.Create(practice),
         {
             ON_REQUESTED_TYPE: ADD_PRACTICES_REQUESTED, 
             ON_LOADED_TYPE: ADD_PRACTICES_LOADED, 

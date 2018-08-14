@@ -46,16 +46,18 @@ class PaginationBar extends Component {
   render() {
 
     return (
+      (this.state.nextButton.isEnabled || this.state.previewsButton.isEnabled) ?
       <div>
-        <FloatingActionButton mini={true} onClick={() => this.state.handleSelectedPageChanged(this.state.previewsButton.pageNumber)}
-          disabled={!this.state.previewsButton.isEnabled}>
-          <KeyboardArrowLeft />
-        </FloatingActionButton>
-        <FloatingActionButton mini={true} onClick={() => this.state.handleSelectedPageChanged(this.state.nextButton.pageNumber)}
-          disabled={!this.state.nextButton.isEnabled}>
-          <KeyboardArrowRight />
-        </FloatingActionButton>
-      </div>
+          <FloatingActionButton mini={true} onClick={() => this.state.handleSelectedPageChanged(this.state.previewsButton.pageNumber)}
+            disabled={!this.state.previewsButton.isEnabled}>
+            <KeyboardArrowLeft />
+          </FloatingActionButton>
+          <FloatingActionButton mini={true} onClick={() => this.state.handleSelectedPageChanged(this.state.nextButton.pageNumber)}
+            disabled={!this.state.nextButton.isEnabled}>
+            <KeyboardArrowRight />
+          </FloatingActionButton>    
+      </div>      
+      : <div></div>
     );
   }
 }

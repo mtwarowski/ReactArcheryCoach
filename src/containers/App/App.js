@@ -52,9 +52,8 @@ export class App extends Component {
     return (
       <MuiThemeProvider muiTheme={ThemeDefault}>
         <div>
-          <Header styles={styles.header}
-            handleChangeRequestNavDrawer={this.handleChangeRequestNavDrawer.bind(this)} />
-          <LeftDrawer navDrawerOpen={navDrawerOpen} />
+          <Header styles={styles.header} handleChangeRequestNavDrawer={this.handleChangeRequestNavDrawer.bind(this)} />
+          <LeftDrawer navDrawerOpen={navDrawerOpen} handleMenuItemSelected={this.handleChangeRequestNavDrawer.bind(this)} />
 
           <div style={styles.container}>
             <Main />

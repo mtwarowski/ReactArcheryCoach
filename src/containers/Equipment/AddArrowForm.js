@@ -5,6 +5,8 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import { database } from '../../Auth/firebase.js';
 import {navigateTo} from '../../helpers/navigation'
+import {getDefaultLabels} from '../../helpers/points'
+
 import ImagePicker from '../../components/ImagePicker'
 
 export default class AddArrowForm extends Component {
@@ -19,7 +21,7 @@ export default class AddArrowForm extends Component {
             nocks: '',
             amoLengthInCm: 75,
             diameterInMm: 50,
-            labels: this.getDefaultLabels(),
+            labels: getDefaultLabels(),
 
             image: '',
             imageName: 'Choose an Image',       
@@ -38,20 +40,13 @@ export default class AddArrowForm extends Component {
             nocks: '',
             amoLengthInCm: 75,
             diameterInMm: 5,
-            labels: this.getDefaultLabels(),
+            labels: getDefaultLabels(),
 
             image: '',
             imageName: 'Choose an Image',       
         });
     }
 
-    getDefaultLabels(){
-        let labels = [];
-        for (let index = 1; index <= 12; index++) {
-            labels.push(index.toString());
-        }
-        return labels;
-    }
 
     handleOnImageSelected(imagePickerState) {
         this.setState({ file: imagePickerState.file, image: imagePickerState.image, imageName: imagePickerState.file.name });

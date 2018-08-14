@@ -18,3 +18,4 @@ deploy:
   token:
     secure: $FIREBASE_TOKEN
     message: "Delpoying to Firebase"
+  project: we-score

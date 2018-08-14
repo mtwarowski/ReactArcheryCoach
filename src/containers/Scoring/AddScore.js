@@ -7,16 +7,17 @@ import { loadArrowsAsync, loadBowsAsync } from '../../actions/equipment'
 import { loadTournamentRoundsAsync, addScoreAsync } from '../../actions/scores'
 
 import { getUnixUtcTimeStamp } from '../../helpers/datetime'
-import { getMaxTournamentRoundScore } from '../../helpers/points'
+import { getMaxTournamentRoundScore, getDefaultLabels } from '../../helpers/points'
 
-import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
-import DatePicker from 'material-ui/DatePicker';
-import AutoComplete from 'material-ui/AutoComplete';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import Snackbar from 'material-ui/Snackbar';
+import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card'
+import FlatButton from 'material-ui/FlatButton'
+import TextField from 'material-ui/TextField'
+import DatePicker from 'material-ui/DatePicker'
+import AutoComplete from 'material-ui/AutoComplete'
+import SelectField from 'material-ui/SelectField'
+import MenuItem from 'material-ui/MenuItem'
+import Snackbar from 'material-ui/Snackbar'
+import Checkbox from 'material-ui/Checkbox'
 
 const dataSourceConfig = {
   text: 'name',
@@ -31,9 +32,14 @@ class AddScore extends Component {
       scoreName: "",
       scoreDate: new Date(),
       tournamentRound: undefined,
+      
+      allowBowSelection: false,
       bow: undefined,
       arrowsSet: undefined,
       scoringType: undefined,
+
+      allowArrowSelection: false,
+      arrowsDiameter: 5,
 
       error: "",
       showError: false,
@@ -72,21 +78,32 @@ class AddScore extends Component {
       return;
     }
 
-    this.props.addScoreAsync({
+    let arrowsSet = this.state.allowArrowSelection ? this.state.arrowsSet : this.generateDefaultArrowSet();
+    let score = {
       name: this.state.scoreName,
       date: this.state.scoreDate,
       timeStamp: getUnixUtcTimeStamp(this.state.scoreDate),
-      bow: this.state.bow,
-      arrowsSet: this.state.arrowsSet,
+      arrowsSet: arrowsSet,
       tournamentRound: this.state.tournamentRound,
       scoringType: this.state.scoringType,
       currentValue: 0,
       maxValue: getMaxTournamentRoundScore(this.state.tournamentRound),
-    });
+    }
+    if(this.state.bow){      
+      score.bow = this.state.bow;
+    }
+    
+    this.props.addScoreAsync(score);
   }
 
 
-
+  generateDefaultArrowSet(){
+    return {
+      name: "Default Arrows",
+      diameterInMm: this.state.arrowsDiameter,
+      labels: getDefaultLabels(),
+    };
+  }
 
   getFormError() {
 
@@ -94,12 +111,16 @@ class AddScore extends Component {
       return "Name field is required";
     }
 
-    if (!this.state.bow) {
+    if (this.state.allowBowSelection && !this.state.bow) {
       return "Bow field is required";
     }
 
-    if (!this.state.arrowsSet) {
+    if (this.state.allowArrowSetSelection && !this.state.arrowsSet) {
       return "Arrow set field is required";
+    }
+
+    if (!this.state.allowArrowSetSelection && !this.state.arrowsDiameter) {
+      return "We need to know the diameter of your arrows set";
     }
 
     if (!this.state.scoreDate) {
@@ -153,26 +174,43 @@ class AddScore extends Component {
             <div>
               <DatePicker placeholder="Choose a date" name="ScoreDate" value={this.state.scoreDate} onChange={(event, date) => this.setState({ scoreDate: date })} fullWidth={true} />
             </div>
-            <div>
-              <AutoComplete floatingLabelText="Bow"
-                filter={AutoComplete.noFilter}
-                onUpdateInput={(value) => this.handleUpdateBowInput(value)}
-                dataSourceConfig={dataSourceConfig}
-                dataSource={this.props.bows || []}
-                openOnFocus={true}
-                disabled={!this.props.bows || this.props.bows.length === 0}
-                fullWidth={true} />
+            
+            <div>              
+              <Checkbox label="Bow Selection" checked={this.state.allowBowSelection} onCheck={() => this.setState({allowBowSelection: !this.state.allowBowSelection})} />
+              <Checkbox label="Arrows Selection" checked={this.state.allowArrowSetSelection} onCheck={() => this.setState({allowArrowSetSelection: !this.state.allowArrowSetSelection})} />
             </div>
-            <div>
-              <AutoComplete floatingLabelText="Arrows"
-                filter={AutoComplete.fuzzyFilter}
-                onUpdateInput={(value) => this.handleUpdateArrowsInput(value)}
-                dataSourceConfig={dataSourceConfig}
-                dataSource={this.props.arrows || []}
-                disabled={!this.props.arrows || this.props.arrows.length === 0}
-                openOnFocus={true}
-                fullWidth={true} />
-            </div>
+            
+            {
+              this.state.allowBowSelection && 
+              <div>
+                <AutoComplete floatingLabelText="Bow"
+                  filter={AutoComplete.noFilter}
+                  onUpdateInput={(value) => this.handleUpdateBowInput(value)}
+                  dataSourceConfig={dataSourceConfig}
+                  dataSource={this.props.bows || []}
+                  openOnFocus={true}
+                  disabled={!this.props.bows || this.props.bows.length === 0}
+                  fullWidth={true} />
+              </div>
+            }
+            
+            {
+              this.state.allowArrowSetSelection ?
+              <div>
+                <AutoComplete floatingLabelText="Arrows"
+                  filter={AutoComplete.fuzzyFilter}
+                  onUpdateInput={(value) => this.handleUpdateArrowsInput(value)}
+                  dataSourceConfig={dataSourceConfig}
+                  dataSource={this.props.arrows || []}
+                  disabled={!this.props.arrows || this.props.arrows.length === 0}
+                  openOnFocus={true}
+                  fullWidth={true} />
+              </div>
+              : 
+              <div>
+                <TextField placeholder="Arrows Diameter [mm]" type="number" name="arrowsDiameter" value={this.state.arrowsDiameter} onChange={(event) => this.setState({ arrowsDiameter: event.target.value })} fullWidth={true} />
+              </div>
+            }
             <div>
               <AutoComplete floatingLabelText="Rounds"
                 filter={AutoComplete.fuzzyFilter}

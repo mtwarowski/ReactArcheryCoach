@@ -4,7 +4,7 @@ import { spacing, typography } from 'material-ui/styles';
 import { white, blue600 } from 'material-ui/styles/colors';
 import MenuItem from 'material-ui/MenuItem';
 import { Link } from 'react-router-dom';
-import Avatar from 'material-ui/Avatar';
+// import Avatar from 'material-ui/Avatar';
 
 import Assessment from 'material-ui/svg-icons/action/assessment';
 import Web from 'material-ui/svg-icons/av/web';
@@ -13,7 +13,7 @@ import Web from 'material-ui/svg-icons/av/web';
 // import ExpandMore from 'material-ui/svg-icons/navigation/expand-more';
 
 const LeftDrawer = (props) => {
-    let { navDrawerOpen } = props;
+    let { navDrawerOpen, handleMenuItemSelected } = props;
 
     const styles = {
         logo: {
@@ -63,15 +63,15 @@ const LeftDrawer = (props) => {
         <Drawer
             docked={true}
             open={navDrawerOpen}>
-            <div style={styles.logo}>
-                Material Admin
-          </div>
-            <div style={styles.avatar.div}>
+            <Link to={'./'} onClick={handleMenuItemSelected}>
+                <div style={styles.logo}>You Shoot</div>
+            </Link>
+            {/* <div style={styles.avatar.div}>
                 <Avatar src="http://www.v0.material-ui.com/images/uxceo-128.jpg"
                     size={30}
                     style={styles.avatar.icon} />
                 <span style={styles.avatar.span}>{props.username}</span>
-            </div>
+            </div> */}
             <div>
             {menus.map((menu, index) =>
               <MenuItem
@@ -80,6 +80,7 @@ const LeftDrawer = (props) => {
                 primaryText={menu.text}
                 leftIcon={menu.icon}
                 containerElement={<Link to={menu.link}/>}
+                onClick={handleMenuItemSelected}
               />
             )}
             </div>

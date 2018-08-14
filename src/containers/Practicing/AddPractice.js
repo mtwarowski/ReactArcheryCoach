@@ -55,8 +55,8 @@ class AddPractice extends Component {
     event.preventDefault();
     var practiceRounds = this.state.practiceRounds;
     practiceRounds.push({
-      numberOfRound: undefined,
-      numberOfTimesPairRound: undefined
+      numberOfRound: '',
+      numberOfTimesPairRound: ''
     });
     this.setState({ practiceRounds: practiceRounds });
   }
@@ -99,9 +99,9 @@ class AddPractice extends Component {
             <FlatButton onClick={this.handleAddNewPracticeRound} fullWidth={true}>New Practice Set:</FlatButton>
             {this.state.practiceRounds.map((practiceRound, index) => (
               <div key={index}>
-                <TextField style={{maxWidth: 100}} placeholder="Rounds" type="number" value={practiceRound.numberOfRound} onChange={(event) => this.handleNumberOfRoundChange(event, index)} />
+                <TextField id={'practiceRound_' + index + '_Rounds'} style={{maxWidth: 100}} placeholder="Rounds" type="number" value={practiceRound.numberOfRound} onChange={(event) => this.handleNumberOfRoundChange(event, index)} />
                 <span> x </span>
-                <TextField style={{maxWidth: 100}} placeholder="Arrows No" type="number" value={practiceRound.numberOfTimesPairRound} onChange={(event) => this.handleNumberOfTimesPairRound(event, index)} />
+                <TextField id={'practiceRound_' + index + '_ArrowsNo'} style={{maxWidth: 100}} placeholder="Arrows No" type="number" value={practiceRound.numberOfTimesPairRound} onChange={(event) => this.handleNumberOfTimesPairRound(event, index)} />
                 <FlatButton onClick={(event) => this.handleDeleteNewPracticeRound(event, index)}>remove</FlatButton>
                 <hr />
               </div>

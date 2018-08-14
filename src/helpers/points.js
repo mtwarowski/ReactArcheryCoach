@@ -45,3 +45,13 @@ export const getCurrentTournamentRoundScore = (results) => {
 
     return sumScore;
 }
+
+
+
+export const getDefaultLabels = () =>{
+    let labels = [];
+    for (let index = 1; index <= 12; index++) {
+        labels.push(index.toString());
+    }
+    return labels;
+}

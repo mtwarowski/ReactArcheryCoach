@@ -1,6 +1,6 @@
 import React from 'react'
 import RaisedButton from 'material-ui/RaisedButton'
-import Paper from 'material-ui/Paper'
+import Card, {CardText} from 'material-ui/Card'
 
 import { navigateTo } from '../../helpers/navigation'
 import { loginWithGoogle } from '../../Auth/AuthService'
@@ -12,15 +12,13 @@ const handleLoginWithGoogle = () =>  {
 }
 
 const LoginPage = () => (
-    <Paper className="centered" style={
-        {
-            paddingTop: 20,
-            paddingBottom: 20,
-            paddingLeft: 50,
-            paddingRight: 50,
-    }}>
-        <RaisedButton primary={true} fullWidth={true} label="Log In / Register With Google" onClick={handleLoginWithGoogle}></RaisedButton>
-    </Paper>
+    <div>
+        <Card >
+            <CardText>
+                <RaisedButton primary={true} fullWidth={true} label="Log In / Register With Google" onClick={handleLoginWithGoogle}></RaisedButton>
+            </CardText>
+        </Card>
+    </div>
 )
 
 export default LoginPage;

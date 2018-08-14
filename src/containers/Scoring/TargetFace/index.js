@@ -144,6 +144,8 @@ export class TargetFace extends Component {
         return targetRings.sort((a, b) => {
             if (a.radius < b.radius) return 1;
             if (a.radius > b.radius) return -1;
+            if (a.radius === undefined) return -1;
+            if (b.radius === undefined) return 1;
             return 0;
         });
     }
