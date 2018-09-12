@@ -9,7 +9,7 @@ class ImageMarker extends Component {
 
     this.state = {
       width: 0, height: 0, scale: { x: 1, y: 1 },
-
+      pointingX: 0, pointingY: 0,
       windowImage: new window.Image(),
       image: '',
       imageName: 'Choose an Image',
@@ -21,11 +21,19 @@ class ImageMarker extends Component {
       // this.imageLayerNode.batchDraw();
     };
 
+    
+    this.state.windowImage.onclick = (e) => {
+
+
+      console.log(JSON.stringify(e));
+    };
+
     this.resize = this.resize.bind(this);
     this.handleOnWheel = this.handleOnWheel.bind(this);
     this.handleOnTouchMove = this.handleOnTouchMove.bind(this);
     this.handleOnTouchEnd = this.handleOnTouchEnd.bind(this);
     this.handleOnImageSelected = this.handleOnImageSelected.bind(this);
+    this.handleImageClicked = this.handleImageClicked.bind(this);
   }
 
 
@@ -88,6 +96,18 @@ class ImageMarker extends Component {
     this.setState({ lastDist: 0 });
   }
 
+  handleImageClicked(e){
+
+    console.log('usual click on ' + JSON.stringify(this.stageRef._stage.getPointerPosition()));
+
+    let event = e.evt;
+    let newX = (event.layerX - this.stageRef._stage.attrs.x) / this.state.scale.x;
+    let newY = (event.layerY - this.stageRef._stage.attrs.y) / this.state.scale.y;
+
+    this.setState({pointingX: newX, pointingY: newY});
+    console.log(JSON.stringify(event));
+  }
+
   handleOnImageSelected(imagePickerState) {
 
     this.state.windowImage.src = imagePickerState.image;
@@ -120,13 +140,11 @@ class ImageMarker extends Component {
           onTouchMove={this.handleOnTouchMove}
           onTouchEnd={this.handleOnTouchEnd}
           scale={this.state.scale}
-          pin
-
-          ref={ref => { this.stageRef = ref; }}>
+          ref={ref => { this.stageRef = ref;}}>
 
           {<Layer ref={ref => { this.imageLayerNode = ref; }}>
-            <Group><Image y={0} x={0} image={this.state.windowImage} /></Group>
-            <Group><Circle x={0} y={0} radius={10} fill={"blue"} stroke={"black"} strokeWidth={1} /></Group>
+            <Group><Image onClick={this.handleImageClicked} y={0} x={0} image={this.state.windowImage} /></Group>
+            <Group><Circle x={this.state.pointingX} y={this.state.pointingY} radius={10} fill={"yellow"} stroke={"black"} strokeWidth={1} /></Group>
           </Layer>
           }
         </Stage>
