@@ -13,7 +13,15 @@ class ImageMarker extends Component {
       windowImage: new window.Image(),
       image: '',
       imageName: 'Choose an Image',
+
+      tagPoints: [
+        { name: 'top' },
+        { name: 'left' },
+        { name: 'right' },
+        { name: 'bottom' }
+      ]
     };
+
 
 
     this.state.windowImage.onload = () => {
@@ -21,7 +29,7 @@ class ImageMarker extends Component {
       // this.imageLayerNode.batchDraw();
     };
 
-    
+
     this.state.windowImage.onclick = (e) => {
 
 
@@ -34,6 +42,7 @@ class ImageMarker extends Component {
     this.handleOnTouchEnd = this.handleOnTouchEnd.bind(this);
     this.handleOnImageSelected = this.handleOnImageSelected.bind(this);
     this.handleImageClicked = this.handleImageClicked.bind(this);
+    this.handlePointChanged = this.handlePointChanged.bind(this);
   }
 
 
@@ -87,7 +96,7 @@ class ImageMarker extends Component {
 
       var scale = this.state.scale.x * dist / this.state.lastDist;
 
-      this.setState({scale: {x: scale, y: scale}});
+      this.setState({ scale: { x: scale, y: scale } });
       this.state.lastDist = dist;
     }
   }
@@ -96,7 +105,7 @@ class ImageMarker extends Component {
     this.setState({ lastDist: 0 });
   }
 
-  handleImageClicked(e){
+  handleImageClicked(e) {
 
     console.log('usual click on ' + JSON.stringify(this.stageRef._stage.getPointerPosition()));
 
@@ -104,7 +113,21 @@ class ImageMarker extends Component {
     let newX = (event.layerX - this.stageRef._stage.attrs.x) / this.state.scale.x;
     let newY = (event.layerY - this.stageRef._stage.attrs.y) / this.state.scale.y;
 
-    this.setState({pointingX: newX, pointingY: newY});
+    let editedTagPoint = undefined;
+    for (let index = 0; index < this.state.tagPoints.length; index++) {
+      const element = this.state.tagPoints[index];
+      if (!element.xPos && !element.yPos) {
+        editedTagPoint = this.state.tagPoints[index];
+        break;
+      }
+    }
+
+    if (editedTagPoint) {
+      editedTagPoint.xPos = newX;
+      editedTagPoint.yPos = newY;
+    }
+
+    this.setState({ pointingX: newX, pointingY: newY });
     console.log(JSON.stringify(event));
   }
 
@@ -119,32 +142,31 @@ class ImageMarker extends Component {
     });
   }
 
-
-  resize() {
-    this.setState({ width: window.innerWidth, height: window.innerHeight - 60 });
+  handlePointChanged(point, index) {
+    let tagPoints = this.state.tagPoints.slice(0);
+    tagPoints[index] = point;
+    this.setState({ tagPoints: tagPoints });
   }
 
 
-  getDistance(p1, p2) {
-    return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y), 2));
+  resize() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight - 60 });
   }
 
   render() {
     return (this.state.file ?
       <div>
         <Stage draggable={true}
-          style={{ background: 'yellow' }}
           height={this.state.height}
           width={this.state.width}
           onWheel={this.handleOnWheel}
           onTouchMove={this.handleOnTouchMove}
           onTouchEnd={this.handleOnTouchEnd}
           scale={this.state.scale}
-          ref={ref => { this.stageRef = ref;}}>
-
+          ref={ref => { this.stageRef = ref; }}>
           {<Layer ref={ref => { this.imageLayerNode = ref; }}>
             <Group><Image onClick={this.handleImageClicked} y={0} x={0} image={this.state.windowImage} /></Group>
-            <Group><Circle x={this.state.pointingX} y={this.state.pointingY} radius={10} fill={"yellow"} stroke={"black"} strokeWidth={1} /></Group>
+            {this.state.tagPoints.map((point, index) => <TagPoint key={index} point={point} pointIndex={"" + index} handlePointChanged={(p, i) => this.handlePointChanged(p, index)} />)}
           </Layer>
           }
         </Stage>
@@ -155,3 +177,100 @@ class ImageMarker extends Component {
 }
 
 export default ImageMarker;
+
+const fillColor = '#A9A9A9';
+// const TagPoint = (props) => {
+//   return <Group draggable={true}
+//     onDragEnd={(e) => props.handlePointChanged({
+//       ...props.point,
+//       xPos: e.target.x(),
+//       yPos: e.target.y()
+//     }, props.pointIndex)}>
+//     <Circle
+//       draggable={true}
+//       x={props.point.xPos}
+//       y={props.point.yPos}
+//       radius={20}
+//       stroke={'rgba(255, 255, 0, 0.5)'}
+//       fill={fillColor}
+//       strokeWidth={1} />
+//     <Circle
+//       draggable={true}
+//       onDragEnd={changeSize}
+//       onDragStart={changeSize}
+//       x={props.point.xPos}
+//       y={props.point.yPos}
+//       radius={10}
+//       stroke={'rgba(255, 255, 0, 1)'}
+//       fill={'rgba(255, 255, 0, 225)'}
+//       strokeWidth={1} />
+//   </Group>
+// }
+
+
+class TagPoint extends React.Component {
+
+
+  render() {
+    const props = this.props;
+    const changeSize = (scale) => {
+      // to() is a method of `Konva.Node` instances
+      if (this.circle.scaleX == 3) {
+        this.circle.to({
+          scaleX: 1,
+          scaleY: 1,
+          duration: 0.2
+        });
+      }
+      else {
+        this.circle.to({
+          scaleX: scale,
+          scaleY: scale,
+          duration: 0.2
+        });
+      }
+    };
+
+    return (
+      <Group draggable={true}
+        onDragMove={(e) => {         
+          changeSize(3);
+          props.handlePointChanged({
+            ...props.point,
+            xPos: e.target.x(),
+            yPos: e.target.y()
+          }, props.pointIndex);
+        }}
+        onDragStart={() => changeSize(3)}
+        onDragEnd={(e) => {
+          props.handlePointChanged({
+            ...props.point,
+            xPos: e.target.x(),
+            yPos: e.target.y()
+          }, props.pointIndex);
+          changeSize(1);
+        }
+        }>
+        <Circle
+          draggable={true}
+          x={props.point.xPos}
+          y={props.point.yPos}
+          ref={(node) => {
+            this.circle = node;
+          }}
+          radius={20}
+          stroke={'rgba(255, 255, 0, 0.5)'}
+          fill={fillColor}
+          strokeWidth={1} />
+        <Circle
+          draggable={true}
+          x={props.point.xPos}
+          y={props.point.yPos}
+          radius={10}
+          stroke={'rgba(255, 255, 0, 1)'}
+          fill={'rgba(255, 255, 0, 225)'}
+          strokeWidth={1} />
+      </Group>
+    );
+  }
+}
