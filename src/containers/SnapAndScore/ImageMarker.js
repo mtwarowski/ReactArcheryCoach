@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Stage, Layer, Circle, Rect, Group, Image } from 'react-konva'
+import { Stage, Layer, Circle, Group, Image } from 'react-konva'
 
-import ImagePicker from '../../components/ImagePicker'
+import ImagePicker, {ImagePickerGraphical} from '../../components/ImagePicker'
 
 class ImageMarker extends Component {
   constructor(props) {
@@ -91,13 +91,11 @@ class ImageMarker extends Component {
         });
 
       if (!this.state.lastDist) {
-        this.state.lastDist = dist;
+        this.setState({ lastDist: dist });
       }
 
       var scale = this.state.scale.x * dist / this.state.lastDist;
-
-      this.setState({ scale: { x: scale, y: scale } });
-      this.state.lastDist = dist;
+      this.setState({ scale: { x: scale, y: scale, lastDist: dist } });
     }
   }
 
@@ -132,13 +130,13 @@ class ImageMarker extends Component {
   }
 
   handleOnImageSelected(imagePickerState) {
-
-    this.state.windowImage.src = imagePickerState.image;
+    let newWindowImage = this.state.windowImage;
+    newWindowImage.src = imagePickerState.image;
     this.setState({
       file: imagePickerState.file,
       image: imagePickerState.image,
       imageName: imagePickerState.file.name,
-      windowImage: this.state.windowImage,
+      windowImage: newWindowImage,
     });
   }
 
@@ -171,7 +169,7 @@ class ImageMarker extends Component {
           }
         </Stage>
       </div>
-      : <ImagePicker label="Select Image" handleImageDataSelected={this.handleOnImageSelected} />
+      : <ImagePickerGraphical label="Select Image" handleImageDataSelected={this.handleOnImageSelected} />
     );
   }
 }
@@ -215,7 +213,7 @@ class TagPoint extends React.Component {
     const props = this.props;
     const changeSize = (scale) => {
       // to() is a method of `Konva.Node` instances
-      if (this.circle.scaleX == 3) {
+      if (this.circle.scaleX === 3) {
         this.circle.to({
           scaleX: 1,
           scaleY: 1,
@@ -233,7 +231,7 @@ class TagPoint extends React.Component {
 
     return (
       <Group draggable={true}
-        onDragMove={(e) => {         
+        onDragMove={(e) => {
           changeSize(3);
           props.handlePointChanged({
             ...props.point,
