@@ -95,7 +95,7 @@ class ImageMarker extends Component {
       }
 
       var scale = this.state.scale.x * dist / this.state.lastDist;
-      this.setState({ scale: { x: scale, y: scale, lastDist: dist } });
+      this.setState({ scale: { x: scale, y: scale }, lastDist: dist });
     }
   }
 
