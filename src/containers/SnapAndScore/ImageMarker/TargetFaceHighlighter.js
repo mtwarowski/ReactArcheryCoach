@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Group, Line } from 'react-konva'
 import TagPoint from './TagPoint';
 
@@ -27,7 +27,7 @@ const checkLineIntersection = (line1StartX, line1StartY, line1EndX, line1EndY, l
         onLine2: false
     };
     denominator = ((line2EndY - line2StartY) * (line1EndX - line1StartX)) - ((line2EndX - line2StartX) * (line1EndY - line1StartY));
-    if (denominator == 0) {
+    if (denominator === 0) {
         return result;
     }
     a = line1StartY - line2StartY;

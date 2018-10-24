@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
-import { Stage, Layer, Circle, Group, Image, Ellipse } from 'react-konva'
+import React from 'react';
+import { Circle, Group } from 'react-konva'
 
-const fillColor = '#A9A9A9';
 export class TagPoint extends React.Component {
 
   render() {

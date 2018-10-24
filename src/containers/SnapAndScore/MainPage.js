@@ -1,8 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import PrivateRoute from '../../containers/App/PrivateRoute';
-
 import {Welcome} from './Welcome'
 import ImageMarker from './ImageMarker'
 
