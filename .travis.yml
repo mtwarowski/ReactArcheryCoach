@@ -9,7 +9,7 @@ before_install:
 script:
   - npm test
 after_success:
-  - npm run build
+  - yarn build
   - firebase deploy -m "Travis deploy" --non-interactive --token $FIREBASE_TOKEN
 branches:
   only:
