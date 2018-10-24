@@ -1,24 +1,16 @@
 language: node_js
-node_js: lts/*
-sudo: false
-before_install:
-- curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 0.27.5
-- export PATH=$HOME/.yarn/bin:$PATH
+node_js:
+  - 6
 cache:
-  yarn: true
-install:
-- echo 'About run install section...'
-- yarn install
+  directories:
+  - node_modules
+before_install:
+  - npm install -g firebase-tools
 script:
-- echo 'About run script section...'
-- yarn build
-before_deploy:
-- npm install -g firebase-tools
-- echo 'About to deploy live...'
-deploy:
-  skip_cleanup: true
-  provider: firebase
-  token:
-    secure: tCAxZvXXaYrclWWmeCvWRGEP7/UFZ35TfRXIk0LdOvSNjGqB3V4f5oSoMXb7qVJNnGv3Ii444QOO4Ah0y6nvun4ubnA+cWmEKaBnlpkbvdHnUCj2iRM2ZSlaxepBgpgQbBR6fFEeeB1+ii+5v5oAscaWHVWGQ0wzS/l76UaA1i03Y1dHgFPn59hkhz0omiUnsq28DcRl+eFV0UHGILeAOjGQUK9TiBkmzNKmV5DGqJRW5hU2OJo5NetPuJqBi5L6OwdkEkoJMwQWNKqmRqnrD0TX6J2qR8MsrVVCNNwDSL7yKDQR4YMXhAYX8Uu6+I37A8WtbZknW731HprR3NxSXosuc2hyzRjmgC3CM5qneby3IjcuxMaEAXtdGQHh8VyAMALqlV8HSZgRCV9BXteSq/m3eDZmNDURxYJlHP+tuoflo+ZEE4vkexSyVp+s0XuIZMPUxt8XkzrWwv0MhpLvwWVDjxGB+nJ98Ae8QaPuUzwJDVCNQ/JJ+GP+Z5VxGoGjoUnzGRG3B6ZNdnAdGZfgpdQkUQQEZJRnOTpJduQUgSVEuRfAHXH0h5BYwF+t16x8EXHYvw9NyBK4N1N5ztuyXwMON/CFKEuNY0/eyOf9lYloQthOcHUoDH5h/EXleSV+JIPNFC6IJj5CtrsFSTwuRTtOVjMyBNGeriHfadZic9U=
-    message: "Delpoying to Firebase"
-  project: we-score
+  - npm test
+after_success:
+  - npm run build
+  - firebase deploy -m "Travis deploy" --non-interactive --token $FIREBASE_TOKEN
+branches:
+  only:
+    - master

@@ -54,7 +54,7 @@ export const loadScoresPageAsync = (pageInfo) => {
             ON_REQUESTED_TYPE: GETPAGE_SCORES_REQUESTED, 
             ON_LOADED_TYPE: GETPAGE_SCORES_LOADED,
             ON_ERROR_TYPE: GETPAGE_SCORES_ERROR
-        }        
+        }
     );
 }
 

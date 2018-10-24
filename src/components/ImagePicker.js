@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import FlatButton from 'material-ui/FlatButton'
-import AddAPhoto from 'material-ui/svg-icons/image/add-a-photo'
 
 export default class ImagePicker extends Component{
 
@@ -62,34 +61,44 @@ export class ImagePickerGraphical extends Component{
     }
 
     handleOnImageSelected(e) {
-
         let reader = new FileReader();
         let file = e.target.files[0];
 
         if (file) {
-            reader.onloadend = () => this.setState({ file: file, image: reader.result, imageName: file.name }, () => this.props.handleImageDataSelected(this.state));
+            reader.onloadend = () => this.props.handleImageDataSelected({ file: file, image: reader.result, imageName: file.name });
             reader.readAsDataURL(file);
         }
     }
 
     render(){    
-        const icon = AddAPhoto;
         const styles = {
-            uploadInput: {
+            uploadView: {
                 cursor: 'pointer',
                 position: 'absolute',
-                top: 0,
+                top: 10,
                 bottom: 0,
                 right: 0,
                 left: 0,
                 width: '100%',
-                width: '100%',      
+                height: '100%',      
                 background: 'url(../../add_photo_alternate.svg) no-repeat center center fixed', 
-                backgroundSize: '50%'             
+                backgroundSize: '50%'
             },
+            uploadInput: {                
+                width: 0.1,
+                height: 0.1,
+                opacity: 0,
+                overflow: 'hidden',
+                position: 'absolute',
+                zIndex: -1
+            }
         };
         return (
-            <input type="file" style={styles.uploadInput} onChange={this.handleOnImageSelected} />
+            <div>
+                <label htmlFor="file-upload" style={styles.uploadView}>
+                </label>
+                <input id="file-upload" style={styles.uploadInput} type="file" onChange={this.handleOnImageSelected}/>
+            </div>
         );
     }
 }
