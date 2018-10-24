@@ -1,6 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux'
 import ReactDOM from 'react-dom';
+import 'core-js/es6/promise';
+import 'core-js/es6/symbol';
+import 'isomorphic-fetch';
 import { BrowserRouter } from 'react-router-dom';
 import './styles.css';
 import App from './containers/App/App';
