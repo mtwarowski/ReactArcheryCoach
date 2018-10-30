@@ -20,15 +20,15 @@ class TargetStage extends React.Component {
 
     var scaleBy = 1.01;
     let stage = this.stageRef._stage;
-    var oldScale = stage.scaleX();
+    let oldScale = stage.scaleX();
 
-    var newScale = e.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    let newScale = e.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-    var mousePointTo = {
+    let mousePointTo = {
       x: stage.getPointerPosition().x / oldScale - stage.x() / oldScale,
       y: stage.getPointerPosition().y / oldScale - stage.y() / oldScale,
     };
-    var newPos = {
+    let newPos = {
       x: -(mousePointTo.x - stage.getPointerPosition().x / newScale) * newScale,
       y: -(mousePointTo.y - stage.getPointerPosition().y / newScale) * newScale
     };
@@ -43,8 +43,12 @@ class TargetStage extends React.Component {
     let touch1 = evt.touches[0];
     let touch2 = evt.touches[1];
 
-    if (touch1 && touch2) {
-      var dist = this.getDistance({
+
+    let stage = this.stageRef._stage;
+    let xScale = stage.scaleX();
+
+    if (touch1 && touch2 && xScale) {
+      let dist = this.getDistance({
         x: touch1.clientX,
         y: touch1.clientY
       }, {
@@ -56,10 +60,8 @@ class TargetStage extends React.Component {
         this.setState({ lastDist: dist });
       }
 
-      var scale = this.createWindowScale(this.state.scale.x * dist / this.state.lastDist);
-      this.setState({ lastDist: dist });
-
-      this.props.onScaleChange(scale);
+      let scale = this.createWindowScale(xScale * dist / this.state.lastDist);
+      this.setState({ lastDist: dist }, () => this.props.onScaleChange(scale));
     }
   }
 
