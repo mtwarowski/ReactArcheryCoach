@@ -38,6 +38,7 @@ export default class TargetStage extends React.Component {
     let evt = e.evt;
     let touch1 = evt.touches[0];
     let touch2 = evt.touches[1];
+    evt.preventDefault();
 
 
     let stage = this.stageRef._stage;
