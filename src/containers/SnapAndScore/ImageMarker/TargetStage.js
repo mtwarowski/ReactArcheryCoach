@@ -10,6 +10,8 @@ export default class TargetStage extends React.Component {
         this.handleOnWheel = this.handleOnWheel.bind(this);
         this.handleOnTouchMove = this.handleOnTouchMove.bind(this);
         this.handleOnTouchEnd = this.handleOnTouchEnd.bind(this);
+        this.handleOnTouchMoveExampleCopy = this.handleOnTouchMoveExampleCopy.bind(this);
+        this.handleOnTouchEndExampleCopy = this.handleOnTouchEndExampleCopy.bind(this);
     }
 
     componentDidMount() {
@@ -62,6 +64,40 @@ export default class TargetStage extends React.Component {
         }
     }
 
+    handleOnTouchEnd() {
+        this.lastDist = 0;
+        this.scaleWindow(this.scale);
+    }
+
+
+    handleOnTouchMoveExampleCopy(e) {
+        let evt = e.evt;
+        evt.preventDefault();
+        let touch1 = evt.touches[0];
+        let touch2 = evt.touches[1];
+
+        if(touch1 && touch2) {
+            let stage = this.stageRef._stage;
+            var dist = this.getDistance(touch1, touch2);
+
+            if(!this.lastDist) {
+                this.lastDist = dist;
+            }
+
+            var scale = stage.getScaleX() * dist / this.lastDist;
+
+            stage.scaleX(scale);
+            stage.scaleY(scale);
+            stage.draw();
+            this.lastDist = dist;
+        }
+    }
+
+    handleOnTouchEndExampleCopy() {
+        this.lastDist = 0;
+    }
+
+
     getDistance(p1, p2) {
         return Math.sqrt(Math.pow((p2.clientX - p1.clientX), 2) + Math.pow((p2.clientY - p1.clientY), 2));
     }
@@ -85,18 +121,13 @@ export default class TargetStage extends React.Component {
         this.props.onScaleChange({ x: scale, y: scale });
     }
 
-    handleOnTouchEnd() {
-        this.lastDist = 0;
-        this.scaleWindow(this.scale);
-    }
-
     render() {
         return <Stage draggable={true}
             height={this.props.height}
             width={this.props.width}
             onWheel={this.handleOnWheel}
-            onTouchMove={this.handleOnTouchMove}
-            onTouchEnd={this.handleOnTouchEnd}
+            onTouchMove={this.handleOnTouchMoveExampleCopy}
+            onTouchEnd={this.handleOnTouchEndExampleCopy}
             scale={this.props.scale}
             onDragEnd={(e) => this.props.onOffsetChange({ xOffset: e.target.attrs.x, yOffset: e.target.attrs.y })}
             ref={ref => { this.stageRef = ref; }}>
