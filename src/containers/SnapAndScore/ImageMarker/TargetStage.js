@@ -19,7 +19,7 @@ export default class TargetStage extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {        
-        if (this.props.scale !== this.prevProps.scale) {
+        if (this.props.scale !== prevProps.scale) {
             this.scale = this.props.scale.x;
         }
     }
