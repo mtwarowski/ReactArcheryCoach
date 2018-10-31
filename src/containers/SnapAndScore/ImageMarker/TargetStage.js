@@ -20,7 +20,7 @@ export default class TargetStage extends React.Component {
         }
     }
 
-    componentDidUpdate(prevProps, prevState) {        
+    componentDidUpdate(prevProps, prevState) {
         if (this.props.scale !== prevProps.scale) {
             this.scale = this.props.scale.x;
         }
@@ -37,7 +37,7 @@ export default class TargetStage extends React.Component {
         let newScale = e.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
         this.newPointingPosition(stage, stage.getPointerPosition().x, stage.getPointerPosition().y, newScale);
-        this.scaleWindow(newScale);   
+        this.scaleWindow(newScale);
     }
 
     handleOnTouchMove(e) {
@@ -58,7 +58,7 @@ export default class TargetStage extends React.Component {
 
             this.newPointingPosition(stage, touch1.clientX, touch1.clientY, newScale);
 
-            this.scale = newScale;            
+            this.scale = newScale;
             stage.scaleX(newScale);
             stage.scaleY(newScale);
         }
@@ -76,11 +76,11 @@ export default class TargetStage extends React.Component {
         let touch1 = evt.touches[0];
         let touch2 = evt.touches[1];
 
-        if(touch1 && touch2) {
+        if (touch1 && touch2) {
             let stage = this.stageRef._stage;
             var dist = this.getDistance(touch1, touch2);
 
-            if(!this.lastDist) {
+            if (!this.lastDist) {
                 this.lastDist = dist;
             }
 
@@ -101,7 +101,7 @@ export default class TargetStage extends React.Component {
     getDistance(p1, p2) {
         return Math.sqrt(Math.pow((p2.clientX - p1.clientX), 2) + Math.pow((p2.clientY - p1.clientY), 2));
     }
-    
+
     newPointingPosition(stage, clientX, clientY, newScale) {
         let oldScale = stage.scaleX();
         let mousePointTo = {
@@ -122,18 +122,43 @@ export default class TargetStage extends React.Component {
     }
 
     render() {
-        return <div id={'container'}> <Stage draggable={true}
-            container={'container'}
+        return <Stage draggable={true}
             height={this.props.height}
             width={this.props.width}
-            //onWheel={this.handleOnWheel}
-            onTouchMove={this.handleOnTouchMoveExampleCopy}
-            onTouchEnd={this.handleOnTouchEndExampleCopy}
-            //scale={this.props.scale}
-            //onDragEnd={(e) => this.props.onOffsetChange({ xOffset: e.target.attrs.x, yOffset: e.target.attrs.y })}
-            ref={ref => { this.stageRef = ref; }}>
+            // onWheel={this.handleOnWheel}
+            // onTouchMove={this.handleOnTouchMoveExampleCopy}
+            // onTouchEnd={this.handleOnTouchEndExampleCopy}
+            // scale={this.props.scale}
+            // onDragEnd={(e) => this.props.onOffsetChange({ xOffset: e.target.attrs.x, yOffset: e.target.attrs.y })}
+            ref={ref => {
+                this.stageRef = ref;
+
+                if (ref) {
+
+                    var lastDist = 0;
+                    var stage = ref._stage;
+                    ref._stage.getContent().addEventListener('touchmove', function (evt) {
+                        var touch1 = evt.touches[0];
+                        var touch2 = evt.touches[1];
+
+                        if (touch1 && touch2) {
+                            var dist = Math.sqrt(Math.pow((touch2.clientX - touch1.clientX), 2) + Math.pow((touch2.clientY - touch1.clientY), 2));
+
+                            var scale = stage.getScaleX() * dist / lastDist;
+
+                            stage.scaleX(scale);
+                            stage.scaleY(scale);
+                            stage.draw();
+                            lastDist = dist;
+                        }
+                    }, false);
+
+                    ref._stage.getContent().addEventListener('touchend', function () {
+                        lastDist = 0;
+                    }, false);
+                }
+            }}>
             {this.props.children}
         </Stage>
-        </div>
     }
 }
