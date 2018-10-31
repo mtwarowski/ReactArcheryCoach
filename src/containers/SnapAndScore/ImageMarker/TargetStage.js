@@ -122,16 +122,18 @@ export default class TargetStage extends React.Component {
     }
 
     render() {
-        return <Stage draggable={true}
+        return <div id={'container'}> <Stage draggable={true}
+            container={'container'}
             height={this.props.height}
             width={this.props.width}
-            onWheel={this.handleOnWheel}
+            //onWheel={this.handleOnWheel}
             onTouchMove={this.handleOnTouchMoveExampleCopy}
             onTouchEnd={this.handleOnTouchEndExampleCopy}
             //scale={this.props.scale}
-            onDragEnd={(e) => this.props.onOffsetChange({ xOffset: e.target.attrs.x, yOffset: e.target.attrs.y })}
+            //onDragEnd={(e) => this.props.onOffsetChange({ xOffset: e.target.attrs.x, yOffset: e.target.attrs.y })}
             ref={ref => { this.stageRef = ref; }}>
             {this.props.children}
         </Stage>
+        </div>
     }
 }
