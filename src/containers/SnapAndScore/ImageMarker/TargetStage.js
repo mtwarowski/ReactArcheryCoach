@@ -128,7 +128,7 @@ export default class TargetStage extends React.Component {
             onWheel={this.handleOnWheel}
             onTouchMove={this.handleOnTouchMoveExampleCopy}
             onTouchEnd={this.handleOnTouchEndExampleCopy}
-            scale={this.props.scale}
+            //scale={this.props.scale}
             onDragEnd={(e) => this.props.onOffsetChange({ xOffset: e.target.attrs.x, yOffset: e.target.attrs.y })}
             ref={ref => { this.stageRef = ref; }}>
             {this.props.children}
