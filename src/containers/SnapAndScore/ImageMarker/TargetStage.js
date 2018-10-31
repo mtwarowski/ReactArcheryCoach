@@ -6,38 +6,36 @@ export default class TargetStage extends React.Component {
         super(props);
 
         this.lastDist = 0;
+        this.scale = 1;
         this.handleOnWheel = this.handleOnWheel.bind(this);
         this.handleOnTouchMove = this.handleOnTouchMove.bind(this);
         this.handleOnTouchEnd = this.handleOnTouchEnd.bind(this);
+    }
+
+    componentDidMount() {
+        if (this.props.scale) {
+            this.scale = this.props.scale.x;
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {        
+        if (this.props.scale !== this.prevProps.scale) {
+            this.scale = this.props.scale.x;
+        }
     }
 
     handleOnWheel(_) {
         let e = _.evt;
         e.preventDefault();
 
-        var scaleBy = 1.01;
+        var scaleBy = 1.05;
         let stage = this.stageRef._stage;
         let oldScale = stage.scaleX();
 
         let newScale = e.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-        // let mousePointTo = {
-        //     x: stage.getPointerPosition().x / oldScale - stage.x() / oldScale,
-        //     y: stage.getPointerPosition().y / oldScale - stage.y() / oldScale,
-        // };
-        // let newPos = {
-        //     x: -(mousePointTo.x - stage.getPointerPosition().x / newScale) * newScale,
-        //     y: -(mousePointTo.y - stage.getPointerPosition().y / newScale) * newScale
-        // };
-
-        // stage.position(newPos);
-        // stage.batchDraw();
-
-
         this.newPointingPosition(stage, stage.getPointerPosition().x, stage.getPointerPosition().y, newScale);
-        //this.scaleWindow(newScale);
-    
-        this.props.onScaleChange({ x: newScale, y: newScale });
+        this.scaleWindow(newScale);   
     }
 
     handleOnTouchMove(e) {
@@ -57,8 +55,8 @@ export default class TargetStage extends React.Component {
             this.lastDist = dist;
 
             this.newPointingPosition(stage, touch1.clientX, touch1.clientY, newScale);
-            //this.scaleWindow(newScale);
-            this.scale = newScale;
+
+            this.scale = newScale;            
             stage.scaleX(newScale);
             stage.scaleY(newScale);
         }
@@ -67,7 +65,7 @@ export default class TargetStage extends React.Component {
     getDistance(p1, p2) {
         return Math.sqrt(Math.pow((p2.clientX - p1.clientX), 2) + Math.pow((p2.clientY - p1.clientY), 2));
     }
-
+    
     newPointingPosition(stage, clientX, clientY, newScale) {
         let oldScale = stage.scaleX();
         let mousePointTo = {
@@ -83,14 +81,13 @@ export default class TargetStage extends React.Component {
         stage.batchDraw();
     }
 
-    // scaleWindow(scale) {
-    //     this.props.onScaleChange({ x: scale, y: scale });
-    // }
+    scaleWindow(scale) {
+        this.props.onScaleChange({ x: scale, y: scale });
+    }
 
     handleOnTouchEnd() {
         this.lastDist = 0;
-        this.props.onScaleChange({ x: this.scale, y: this.scale });
-        this.scale = 0;
+        this.scaleWindow(this.scale);
     }
 
     render() {
