@@ -134,7 +134,6 @@ export default class TargetStage extends React.Component {
                 this.stageRef = ref;
 
                 if (ref) {
-
                     var stage = ref._stage;
                     ref._stage.getContent().addEventListener('touchmove', function (evt) {
                         var touch1 = evt.touches[0];
@@ -143,7 +142,15 @@ export default class TargetStage extends React.Component {
                         if (touch1 && touch2) {
                             var dist = Math.sqrt(Math.pow((touch2.clientX - touch1.clientX), 2) + Math.pow((touch2.clientY - touch1.clientY), 2));
 
+                            if(!this.lastDist) {
+                                this.lastDist = dist;
+                            }
+
                             var scale = stage.getScaleX() * dist / this.lastDist;
+
+                            if(!scale){
+                                scale = stage.getScaleX();
+                            }
 
                             stage.scaleX(scale);
                             stage.scaleY(scale);
