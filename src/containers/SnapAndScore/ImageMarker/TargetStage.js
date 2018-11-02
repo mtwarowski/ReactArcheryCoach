@@ -7,8 +7,6 @@ export default class TargetStage extends React.Component {
 
         this.lastDist = 0;
         this.handleOnWheel = this.handleOnWheel.bind(this);
-        // this.handleOnTouchMove = this.handleOnTouchMove.bind(this);
-        // this.handleOnTouchEnd = this.handleOnTouchEnd.bind(this);
         this.handleOnTouchEndWithOnScaleChange = this.handleOnTouchEndWithOnScaleChange.bind(this);
     }
 
@@ -38,36 +36,6 @@ export default class TargetStage extends React.Component {
         this.scaleWindow(newScale);
         this.props.onScaleChange({ x: newScale, y: newScale });
     }
-
-    // handleOnTouchMove(e) {
-    //     let evt = e.evt;
-    //     evt.preventDefault();
-    //     let touch1 = evt.touches[0];
-    //     let touch2 = evt.touches[1];
-
-    //     if (touch1 && touch2) {
-    //         let stage = this.stageRef._stage;
-    //         let xScale = stage.scaleX();
-    //         let dist = this.getDistance(touch1, touch2);
-    //         if (!this.lastDist) {
-    //             this.lastDist = dist;
-    //         }
-    //         let newScale = xScale * dist / this.lastDist;
-    //         this.lastDist = dist;
-
-    //         this.newPointingPosition(stage, touch1.clientX, touch1.clientY, newScale);
-
-    //         this.scale = newScale;
-    //         stage.scaleX(newScale);
-    //         stage.scaleY(newScale);
-    //     }
-    // }
-
-    // handleOnTouchEnd() {
-    //     this.lastDist = 0;
-    //     this.props.onScaleChange({ x: scale, y: scale });
-    // }
-
 
     handleOnTouchEndWithOnScaleChange() {
         let stage = this.stageRef._stage;
@@ -106,46 +74,48 @@ export default class TargetStage extends React.Component {
         }
     }
 
-
-
     render() {
         return <Stage draggable={true}
             height={this.props.height}
             width={this.props.width}
             onWheel={this.handleOnWheel}
-            //onTouchMove={this.handleOnTouchMoveExampleCopy}
             onTouchEnd={this.handleOnTouchEndWithOnScaleChange}
-            //scale={this.props.scale}
             onDragEnd={(e) => this.props.onOffsetChange({ xOffset: e.target.attrs.x, yOffset: e.target.attrs.y })}
             ref={ref => {
                 this.stageRef = ref;
 
                 if (ref) {
                     var stage = ref._stage;
+                    var touchMoveEventName = 'touchmove';
+                    var content = ref._stage.getContent();
                     ref._stage.lastDist = 0;
-                    ref._stage.getContent().addEventListener('touchmove', function (evt) {
-                        var touch1 = evt.touches[0];
-                        var touch2 = evt.touches[1];
-                        //var touch2 = {clientX: touch1.clientX + stage.lastDist + 0.001, clientY: touch1.clientY};
-                        if (touch1 && touch2) {
-                            var dist = Math.sqrt(Math.pow((touch2.clientX - touch1.clientX), 2) + Math.pow((touch2.clientY - touch1.clientY), 2));
-
-                            if (!stage.lastDist) {
+                    
+                    if(!content.hasTouchMoveEventListener){
+                        content.addEventListener(touchMoveEventName, function (evt) {
+                            var touch1 = evt.touches[0];
+                            var touch2 = evt.touches[1];
+                            if (touch1 && touch2) {
+                                var dist = Math.sqrt(Math.pow((touch2.clientX - touch1.clientX), 2) + Math.pow((touch2.clientY - touch1.clientY), 2));
+    
+                                if (!stage.lastDist) {
+                                    stage.lastDist = dist;
+                                }
+    
+                                var scale = stage.getScaleX() * dist / stage.lastDist;
+    
+                                if (!scale) {
+                                    scale = stage.getScaleX();
+                                }
+    
+                                stage.scaleX(scale);
+                                stage.scaleY(scale);
+                                stage.draw();
                                 stage.lastDist = dist;
                             }
+                        }, false);
 
-                            var scale = stage.getScaleX() * dist / stage.lastDist;
-
-                            if (!scale) {
-                                scale = stage.getScaleX();
-                            }
-
-                            stage.scaleX(scale);
-                            stage.scaleY(scale);
-                            stage.draw();
-                            stage.lastDist = dist;
-                        }
-                    }, false);
+                        content.hasTouchMoveEventListener = true;
+                    }
                 }
             }}>
             {this.props.children}
