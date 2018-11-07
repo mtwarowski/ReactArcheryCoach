@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { getUserId } from '../../Auth/AuthService';
+
 import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
@@ -20,7 +22,7 @@ export default class AddArrowForm extends Component {
             shaftType: '',
             nocks: '',
             amoLengthInCm: 75,
-            diameterInMm: 50,
+            diameterInMm: 5,
             labels: getDefaultLabels(),
 
             image: '',
@@ -53,10 +55,9 @@ export default class AddArrowForm extends Component {
     }
 
     handleSubmit(event) {
-
         event.preventDefault();
-        var userId = this.authService.getUserId();
-        database.ref('userData/' + userId + '/arrows').push({            
+
+        database.ref('userData/' + getUserId() + '/arrows').push({            
             name: this.state.name,
             vanes: this.state.vanes,
             comment: this.state.comment,

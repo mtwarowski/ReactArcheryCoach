@@ -38,7 +38,7 @@ class AddScore extends Component {
       arrowsSet: undefined,
       scoringType: undefined,
 
-      allowArrowSelection: false,
+      allowArrowSetSelection: false,
       arrowsDiameter: 5,
 
       error: "",
@@ -78,7 +78,7 @@ class AddScore extends Component {
       return;
     }
 
-    let arrowsSet = this.state.allowArrowSelection ? this.state.arrowsSet : this.generateDefaultArrowSet();
+    let arrowsSet = this.state.allowArrowSetSelection ? this.state.arrowsSet : this.generateDefaultArrowSet();
     let score = {
       name: this.state.scoreName,
       date: this.state.scoreDate,

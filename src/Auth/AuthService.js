@@ -1,61 +1,6 @@
 import decode from 'jwt-decode';
 import { auth, provider } from './firebase.js';
 
-// class AuthService {
-
-//     constructor() {
-//         this.loginWithGoogle = this.loginWithGoogle.bind(this)
-//     }
-
-//     loginWithGoogle(){
-//         var loginPromise = Promise.resolve(
-
-
-//         auth.signInWithPopup(provider) 
-//         .then((result) => {
-//           const user = result.user;
-//           this.setUserId(user.uid);
-
-//           user.getIdToken().then((token) => {
-//             this.setToken(token);
-//           });
-//           return result;       
-//         }));
-//         return loginPromise;
-//     }
-
-//     logout() {
-//         logout();
-//     }
-
-//     loggedIn() {
-//         return isLoggedIn();
-//     }
-
-//     setToken(idToken) {
-//         // Saves user token to localStorage
-//         localStorage.setItem('id_token', idToken)
-//     }
-
-//     getToken() {
-//         return getToken();
-//     }    
-
-//     setUserId(userId) {
-//         // Saves user to localStorage
-//         localStorage.setItem('uid_user', userId)
-//     }
-
-//     getUserId() {
-//         // Retrieves the user from localStorage
-//         return localStorage.getItem('uid_user')
-//     }
-
-//     isTokenExpired(token) {
-//         return isTokenExpired(token);
-//     }
-// }
-
 export const isLoggedIn = () => {
     // Checks if there is a saved token and it's still valid
     const token = getToken() // GEtting token from localstorage

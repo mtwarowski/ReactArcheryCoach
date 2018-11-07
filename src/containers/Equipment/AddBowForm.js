@@ -9,6 +9,8 @@ import MenuItem from 'material-ui/MenuItem';
 import {navigateTo} from '../../helpers/navigation'
 import { database } from '../../Auth/firebase.js';
 
+import { getUserId } from '../../Auth/AuthService';
+
 import MultiRowSelector from '../../components/MultiRowSelector';
 
 import ImagePicker from '../../components/ImagePicker'
@@ -84,10 +86,9 @@ class AddBowForm extends Component {
     }
 
     handleSubmit(event) {
-
         event.preventDefault();
-        var userId = this.authService.getUserId();
-        database.ref('userData/' + userId + '/bows').push({
+
+        database.ref('userData/' + getUserId() + '/bows').push({
             name: this.state.name,
             brand: this.state.brand,
             size: this.state.size,
