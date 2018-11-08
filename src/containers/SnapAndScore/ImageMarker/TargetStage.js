@@ -27,7 +27,7 @@ export default class TargetStage extends React.Component {
         e.preventDefault();
 
         var scaleBy = 1.05;
-        let stage = this.stageRef._stage;
+        let stage = this.stageRef;
         let oldScale = stage.scaleX();
 
         let newScale = e.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
@@ -38,7 +38,7 @@ export default class TargetStage extends React.Component {
     }
 
     handleOnTouchEndWithOnScaleChange() {
-        let stage = this.stageRef._stage;
+        let stage = this.stageRef;
         if (stage) {
             stage.lastDist = 0;
             this.props.onScaleChange({ x: stage.getScaleX(), y: stage.getScaleY() });
@@ -66,7 +66,7 @@ export default class TargetStage extends React.Component {
     }
 
     scaleWindow(scale) {
-        let stage = this.stageRef._stage;
+        let stage = this.stageRef;
         if (stage) {
             stage.scaleX(scale);
             stage.scaleY(scale);
@@ -82,10 +82,10 @@ export default class TargetStage extends React.Component {
             onTouchEnd={this.handleOnTouchEndWithOnScaleChange}
             onDragEnd={(e) => this.props.onOffsetChange({ xOffset: e.target.attrs.x, yOffset: e.target.attrs.y })}
             ref={ref => {
-                this.stageRef = ref;
 
                 if (ref) {
-                    var stage = ref._stage;
+                    this.stageRef = ref.getStage();
+                    var stage = this.stageRef;
                     var content = stage && stage.getContent();
                     
                     if(content && !content.hasTouchMoveEventListener){
