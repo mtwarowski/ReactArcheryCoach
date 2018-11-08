@@ -70,7 +70,7 @@ export default class TargetStage extends React.Component {
         if (stage) {
             stage.scaleX(scale);
             stage.scaleY(scale);
-            stage.draw();
+            stage.draw();            
         }
     }
 
@@ -86,39 +86,34 @@ export default class TargetStage extends React.Component {
 
                 if (ref) {
                     var stage = ref._stage;
-
-                    if (stage) {
-                        var touchMoveEventName = 'touchmove';
-                        var content = stage.getContent();
+                    var content = stage && stage.getContent();
+                    
+                    if(content && !content.hasTouchMoveEventListener){
                         stage.lastDist = 0;
-
-                        if (content && !content.hasTouchMoveEventListener) {
-                            content.addEventListener(touchMoveEventName, function (evt) {
-                                var touch1 = evt.touches[0];
-                                var touch2 = evt.touches[1];
-                                if (touch1 && touch2) {
-                                    var dist = Math.sqrt(Math.pow((touch2.clientX - touch1.clientX), 2) + Math.pow((touch2.clientY - touch1.clientY), 2));
-
-                                    if (!stage.lastDist) {
-                                        stage.lastDist = dist;
-                                    }
-
-                                    var scale = stage.getScaleX() * dist / stage.lastDist;
-
-                                    if (!scale) {
-                                        scale = stage.getScaleX();
-                                    }
-
-                                    stage.scaleX(scale);
-                                    stage.scaleY(scale);
-                                    stage.draw();
+                        content.addEventListener('touchmove', function (evt) {
+                            var touch1 = evt.touches[0];
+                            var touch2 = evt.touches[1];
+                            if (touch1 && touch2) {
+                                var dist = Math.sqrt(Math.pow((touch2.clientX - touch1.clientX), 2) + Math.pow((touch2.clientY - touch1.clientY), 2));
+    
+                                if (!stage.lastDist) {
                                     stage.lastDist = dist;
                                 }
-                            }, false);
+    
+                                var scale = stage.getScaleX() * dist / stage.lastDist;
+    
+                                if (!scale) {
+                                    scale = stage.getScaleX();
+                                }
+    
+                                stage.scaleX(scale);
+                                stage.scaleY(scale);
+                                stage.draw();
+                                stage.lastDist = dist;
+                            }
+                        }, false);
 
-                            content.hasTouchMoveEventListener = true;
-
-                        }
+                        content.hasTouchMoveEventListener = true;
                     }
                 }
             }}>
