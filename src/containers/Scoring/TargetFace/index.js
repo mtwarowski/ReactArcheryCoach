@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Stage, Layer, Circle, Rect, Group } from 'react-konva'
+import { Layer, Circle, Rect, Group } from 'react-konva'
 
 import ArrowPoint from './ArrowPoint'
 import ArrowPointBar from './EndPointBar'
@@ -8,11 +8,13 @@ import ArrowNumberSelectorBar from './ArrowNumberSelectorBar'
 import TargetFaceControlBar from './TargetFaceControlBar'
 import { getArrowPointWithValues } from './TargetFacePointDetection'
 
+import TargetStage from '../../SnapAndScore/ImageMarker/TargetStage'
+
 export class TargetFace extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            width: 0, height: 0, scale: { x: 1, y: 1 },
+            width: 0, height: 0, scale: { x: 1, y: 1 }, xOffset: 0, yOffset: 0,
             arrowPointsSelectedIndex: null
         };
 
@@ -93,7 +95,7 @@ export class TargetFace extends Component {
 
     scaleStage(amount) {
         let newScale = { x: this.state.scale.x + amount, y: this.state.scale.y + amount };
-        this.setState({ scale: newScale});
+        this.setState({ scale: newScale });
         this.props.onEndChanged(this.props.end);
     }
 
@@ -110,10 +112,10 @@ export class TargetFace extends Component {
     }
 
     handleAddNewArrowPoint() {
-        let stageX = (this.stageNode._stage.attrs.x || 0);
-        let stageY = (this.stageNode._stage.attrs.y || 0);
-        let scaleX = (this.stageNode._stage.attrs.scaleX || 1);
-        let scaleY = (this.stageNode._stage.attrs.scaleY || 1);
+        let stageX = (this.state.xOffset || 0);
+        let stageY = (this.state.yOffset || 0);
+        let scaleX = (this.state.scale.x || 1);
+        let scaleY = (this.state.scale.y || 1);
         let widthMiddle = ((this.state.width / 2) - stageX) / scaleX;
         let heightMiddle = ((this.state.height / 2) - stageY) / scaleY;
         this.addNewArrowPoint(widthMiddle, heightMiddle);
@@ -140,7 +142,7 @@ export class TargetFace extends Component {
         this.setState({ arrowPointsSelectedIndex: null }, () => this.props.onEndChanged(newEnd));
     }
 
-    orderTargetRingsByRadius(targetRings){
+    orderTargetRingsByRadius(targetRings) {
         return targetRings.sort((a, b) => {
             if (a.radius < b.radius) return 1;
             if (a.radius > b.radius) return -1;
@@ -153,11 +155,10 @@ export class TargetFace extends Component {
     render() {
         return (this.props.targetFace ?
             <div>
-                <Stage draggable={true}
-                    scale={this.state.scale}
-                    height={this.state.height}
-                    width={this.state.width}
-                    ref={node => this.stageNode = node}>
+
+                <TargetStage width={this.state.width} height={this.state.height} scale={this.state.scale}
+                    onScaleChange={(scale) => this.setState({ scale: scale })}
+                    onOffsetChange={(e) => this.setState({ xOffset: e.xOffset, yOffset: e.yOffset })}>
                     <Layer>
                         <Group>
                             <Rect
@@ -186,7 +187,7 @@ export class TargetFace extends Component {
                             return <ArrowPoint key={index} point={point} pointIndex={"" + index} handlePointChanged={(p, i) => this.handlePointChanged(p, index)} />
                         })}
                     </Layer>
-                </Stage>
+                </TargetStage>
                 <TargetFaceControlBar scaleStage={this.scaleStage} handleAddNewArrowPoint={this.handleAddNewArrowPoint} scale={this.state.scale} />
                 <ArrowPointBar points={this.props.end} onArrowPointSelected={this.handleArrowPointBarSelected} onArrowPointRemove={this.handleArrowPointBarRemove} />
                 {this.props.withArrowNumbers && <ArrowNumberSelectorBar availableArrowNumbers={this.getAvailableArrowNumbers()} arrowPointsSelectedIndex={this.state.arrowPointsSelectedIndex} handleArrowNumberSelected={this.handleArrowNumberSelected} />}

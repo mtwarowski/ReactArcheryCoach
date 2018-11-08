@@ -86,7 +86,6 @@ class ImageMarker extends Component {
 
   render() {
     return (this.state.file ?
-      <div>
         <TargetStage width={this.state.width} height={this.state.height} scale={this.state.scale}
           onScaleChange={(scale) => this.setState({ scale: scale })}
           onOffsetChange={(e) => this.setState({ xOffset: e.xOffset, yOffset: e.yOffset })}>
@@ -103,7 +102,6 @@ class ImageMarker extends Component {
           </Layer>
           }
         </TargetStage>
-      </div>
       : <ImagePickerGraphical handleImageDataSelected={this.handleOnImageSelected} />
     );
   }
