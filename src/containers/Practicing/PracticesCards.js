@@ -3,7 +3,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import { deletePracticeByIdAsync } from '../../actions/practices'
-
 import { getTimeTextFromTimeSpam } from '../../helpers/datetime'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card';
@@ -31,13 +30,13 @@ const PracticesCards = ({practices, deletePracticeByIdAsync}) => {
               <Card style={styles.card}>
                 <CardHeader
                   title={practice.name}
-                  subtitle={practice.practiceDateTimeStamp}
+                  subtitle={practice.timeStamp}
                   avatar={
                     <Avatar>{practice.totalValue}</Avatar>
                   }
                 />
                 <CardText>
-                  <div><span>{practice.name} {getTimeTextFromTimeSpam(practice.practiceDateTimeStamp)}</span></div>
+                  <div><span>{practice.name} {getTimeTextFromTimeSpam(practice.timeStamp)}</span></div>
                 </CardText>
                 <CardActions>
                   <IconButton onClick={() => deletePracticeByIdAsync(practice.id)}><Delete /></IconButton>

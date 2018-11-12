@@ -1,16 +1,21 @@
-import { database } from '../Auth/firebase.js';
-import { getUserId } from '../Auth/AuthService';
-import { mapFirebaseObjectToArray } from '../helpers/dataMapping';
+import { database } from '../Auth/firebase.js'
+import { getUserId } from '../Auth/AuthService'
+import { mapFirebaseObjectToArray } from '../helpers/dataMapping'
+import { getDayText } from '../helpers/datetime'
 
-const GetAllTournamentRounds = () => {     
+const GetAllTournamentRounds = () => {
     return database.ref('tournamentRounds').once('value');
 }
 
-const GetScore = (id) => {     
+const GetScore = (id) => {
     return database.ref('userData/' + getUserId() + '/scores/' + id).once('value');
 }
 
-const GetAllScore = () => {     
+const GetScoreByDay = (day) => {
+    return database.ref('userData/' + getUserId() + '/scores').orderByChild('day').equalTo(day).once('value');
+}
+
+const GetAllScore = () => {
     return database.ref('userData/' + getUserId() + '/scores/').once('value');
 }
 
@@ -44,4 +49,4 @@ const Update = (id, score) => {
     return database.ref(`userData/${getUserId()}/scores/${id}/`).set(score);
 }
 
-export default { GetAllTournamentRounds, Create, GetScore, GetAllScore, Update, GetPage };
+export default { GetAllTournamentRounds, Create, GetScore, GetAllScore, Update, GetPage, GetScoreByDay };

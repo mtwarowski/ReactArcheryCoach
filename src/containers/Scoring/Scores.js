@@ -17,12 +17,14 @@ import Delete from 'material-ui/svg-icons/action/delete';
 import Edit from 'material-ui/svg-icons/image/edit';
 import Avatar from 'material-ui/Avatar/Avatar';
 
+import { LoadingIndicator } from '../../components/LoadingIndicator'
+
 const styles = {
   cardContainer: {
     marginTop: 10,
     marginLeft: 2,
     marginRight: 2,
-  },      
+  },
   card: {
     margin: 5,
   }
@@ -47,42 +49,45 @@ class Scores extends Component {
     });
   }
 
-  handleDeleteScoreById(scoreId){
-    
+  handleDeleteScoreById(scoreId) {
+
   }
 
   render() {
     return (
       <div className="mainContainer">
-        <PaginationBar pageNumber={this.props.pageNumber} pageSize={this.props.pageSize} itemCount={this.props.itemCount} handleSelectedPageChanged={this.handleSelectedPageChanged} />
 
-        <div style={styles.cardContainer} className="row">
-          {!this.props.scores ? <div>Unable to load scores.</div>
-            : this.props.scores.map((score, index) => (
-              <div key={score.id} className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-                <Card style={styles.card}>
-                  <CardHeader
-                    title={'of ' + score.maxValue}
-                    subtitle={getTimeTextFromTimeSpam(score.timeStamp)}
-                    avatar={
-                      <Avatar>{score.currentValue}</Avatar>
-                    }/>
-                  <CardText>
-                    <div><span>{score.name} {getTimeTextFromTimeSpam(score.timeStamp)}</span></div>
-                  </CardText>
-                  <CardActions>   
-                    <Link to={'/scores/' + score.id} >               
-                      <IconButton><Edit /></IconButton>
-                    </Link>
-                    <IconButton onClick={() => this.handleDeleteScoreById(score.id)}><Delete /></IconButton>
-                  </CardActions>
-                </Card>
-              </div>
-            ))
-          }
-        </div>
+        <LoadingIndicator isLoading={this.props.isLoading}>
+          <PaginationBar pageNumber={this.props.pageNumber} pageSize={this.props.pageSize} itemCount={this.props.itemCount} handleSelectedPageChanged={this.handleSelectedPageChanged} />
 
-        <LinkFloatingActionButton url="/scores/new" />
+          <div style={styles.cardContainer} className="row">
+            {!this.props.scores ? <div>Unable to load scores.</div>
+              : this.props.scores.map((score, index) => (
+                <div key={score.id} className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                  <Card style={styles.card}>
+                    <CardHeader
+                      title={'of ' + score.maxValue}
+                      subtitle={getTimeTextFromTimeSpam(score.timeStamp)}
+                      avatar={
+                        <Avatar>{score.currentValue}</Avatar>
+                      } />
+                    <CardText>
+                      <div><span>{score.name} {getTimeTextFromTimeSpam(score.timeStamp)}</span></div>
+                    </CardText>
+                    <CardActions>
+                      <Link to={'/scores/' + score.id} >
+                        <IconButton><Edit /></IconButton>
+                      </Link>
+                      <IconButton onClick={() => this.handleDeleteScoreById(score.id)}><Delete /></IconButton>
+                    </CardActions>
+                  </Card>
+                </div>
+              ))
+            }
+          </div>
+
+          <LinkFloatingActionButton url="/scores/new" />
+        </LoadingIndicator>
       </div>
     );
   }
@@ -94,7 +99,8 @@ const mapStateToProps = (state, props) => {
     pageSize: state.scores.page.pageSize,
     pageNumber: state.scores.page.pageNumber,
     itemCount: state.scores.page.itemCount,
-    scores: state.scores.page.data
+    scores: state.scores.page.data,
+    isLoading: state.scores.isLoading,
   }
   return newProps;
 }

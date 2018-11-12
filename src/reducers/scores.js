@@ -1,7 +1,7 @@
 import * as scoresActions from '../actions/scores'
 
 const initialState = {
-    isLoading: false,    
+    isLoading: false,
     isSaving: false,
     tournamentRounds: null,
     score: null,
@@ -50,18 +50,18 @@ const scores = (state = initialState, action) => {
                 isSaving: false
             }
 
-            case scoresActions.GET_SCOREDETAILS_REQUESTED:
+        case scoresActions.GET_SCOREDETAILS_REQUESTED:
             return {
                 ...state,
                 score: null,
-                isSaving: true
+                isLoading: true
             }
 
         case scoresActions.GET_SCOREDETAILS_LOADED:
             return {
                 ...state,
                 score: action.data,
-                isSaving: false
+                isLoading: false
             }
 
         case scoresActions.GET_SCOREDETAILS_ERROR:
@@ -69,10 +69,10 @@ const scores = (state = initialState, action) => {
                 ...state,
                 error: action.error,
                 score: null,
-                isSaving: false
+                isLoading: false
             }
 
-            case scoresActions.GETPAGE_SCORES_REQUESTED:
+        case scoresActions.GETPAGE_SCORES_REQUESTED:
             return {
                 ...state,
                 page: {},

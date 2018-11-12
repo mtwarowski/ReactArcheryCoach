@@ -1,6 +1,7 @@
 import { database } from '../Auth/firebase.js';
 import { getUserId } from '../Auth/AuthService';
 import { mapFirebaseObjectToArray } from '../helpers/dataMapping';
+import {getDayText} from '../helpers/datetime'
 
 const GetPage = (pageNumber, pageSize) => {
 
@@ -9,7 +10,7 @@ const GetPage = (pageNumber, pageSize) => {
         const numberOfItems = snapshot.numChildren();
 
         let at = (pageSize * pageNumber) - pageSize + 1;
-        return database.ref('userData/' + getUserId() + '/practices').orderByChild('practiceDateTimeStamp').startAt(at).limitToFirst(pageSize).once('value')
+        return database.ref('userData/' + getUserId() + '/practices').orderByChild('timeStamp').startAt(at).limitToFirst(pageSize).once('value')
             .then((data) => {
                 return Promise.resolve({
                     val: () => {
@@ -23,6 +24,10 @@ const GetPage = (pageNumber, pageSize) => {
                 });
             });
     });
+}
+
+const GetPracticeByDay = (day) => {     
+    return database.ref('userData/' + getUserId() + '/practices').orderByChild('day').equalTo(day).once('value');
 }
 
 const Delete = (practiceId) => {
@@ -43,4 +48,4 @@ const Update = (id, practice) => {
     return database.ref(`userData/${getUserId()}/practices/${id}/`).set(practice);
 }
 
-export default { GetPage, Delete, Create, Update };
+export default { GetPage, Delete, Create, Update, GetPracticeByDay };

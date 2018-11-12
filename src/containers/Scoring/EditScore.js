@@ -9,6 +9,8 @@ import { Card, CardTitle, CardText } from 'material-ui/Card';
 import { navigateTo } from '../../helpers/navigation'
 import { EndPoint } from './TargetFace/EndPoint'
 
+import { LoadingIndicator } from '../../components/LoadingIndicator'
+
 const RoundEndSummary = ({endNo, arrowsPairEnd, endPoints}) => {
   let arrowsSummaryRow = [];
   for (let arrowNo = 0; arrowNo < arrowsPairEnd; arrowNo++) {
@@ -54,7 +56,9 @@ class EditScore extends Component {
   }
 
   render() {
-    return (this.props.score ? 
+    return (
+      <LoadingIndicator isLoading={this.props.isLoading}>
+      {this.props.score ? 
         <Card>
           <CardTitle title={this.props.score.name} />
           {this.props.score.tournamentRound.rounds.map((round, index) => <div key={index}>
@@ -66,7 +70,8 @@ class EditScore extends Component {
           </div>) }
 
         </Card>
-      : "no data"
+      : "no data"}
+      </LoadingIndicator>
     );
   }
 }
@@ -76,7 +81,8 @@ const mapStateToProps = (state, props) => {
     ...props,
     scoreId: props.match.params.id,
     score: state.scores.score,
-    scoreResults: state.scores.score ? state.scores.score.results : []
+    scoreResults: state.scores.score ? state.scores.score.results : [],
+    isLoading: state.scores.isLoading,
   };
 }
 

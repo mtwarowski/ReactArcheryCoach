@@ -9,6 +9,8 @@ import PracticesCards from './PracticesCards'
 import PaginationBar from '../../components/PaginationBar.js'
 import LinkFloatingActionButton from '../../components/Layout/LinkFloatingActionButton'
 
+import { LoadingIndicator } from '../../components/LoadingIndicator'
+
 class Practices extends Component {
 
   constructor(props) {
@@ -31,9 +33,11 @@ class Practices extends Component {
   render() {
     return (
       <div className="Practices">
-        <PaginationBar pageNumber={this.props.pageNumber} pageSize={this.props.pageSize} itemCount={this.props.itemCount} handleSelectedPageChanged={this.handleSelectedPageChanged} />
-        <PracticesCards />
-        <LinkFloatingActionButton url="/practices/new" />
+        <LoadingIndicator isLoading={this.props.isLoading}>
+          <PaginationBar pageNumber={this.props.pageNumber} pageSize={this.props.pageSize} itemCount={this.props.itemCount} handleSelectedPageChanged={this.handleSelectedPageChanged} />
+          <PracticesCards />
+          <LinkFloatingActionButton url="/practices/new" />
+        </LoadingIndicator>
       </div>
     );
   }
@@ -45,7 +49,8 @@ const mapStateToProps = (state, props) => {
     pageSize: state.practices.page.pageSize,
     pageNumber: state.practices.page.pageNumber,
     itemCount: state.practices.page.itemCount,
-    practices: state.practices.page.data
+    practices: state.practices.page.data,
+    isLoading: state.practices.isLoading,
   }
   return newProps;
 }

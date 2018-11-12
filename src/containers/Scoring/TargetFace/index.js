@@ -155,7 +155,6 @@ export class TargetFace extends Component {
     render() {
         return (this.props.targetFace ?
             <div>
-
                 <TargetStage width={this.state.width} height={this.state.height} scale={this.state.scale}
                     onScaleChange={(scale) => this.setState({ scale: scale })}
                     onOffsetChange={(e) => this.setState({ xOffset: e.xOffset, yOffset: e.yOffset })}>
@@ -188,7 +187,7 @@ export class TargetFace extends Component {
                         })}
                     </Layer>
                 </TargetStage>
-                <TargetFaceControlBar scaleStage={this.scaleStage} handleAddNewArrowPoint={this.handleAddNewArrowPoint} scale={this.state.scale} />
+                <TargetFaceControlBar scaleStage={this.scaleStage} handleAddNewArrowPoint={this.handleAddNewArrowPoint} scale={this.state.scale} handleSaveButtonPress={this.props.onSaveEnd} showSaveButton={this.props.end.length === this.props.round.arrowsPairEnd} />
                 <ArrowPointBar points={this.props.end} onArrowPointSelected={this.handleArrowPointBarSelected} onArrowPointRemove={this.handleArrowPointBarRemove} />
                 {this.props.withArrowNumbers && <ArrowNumberSelectorBar availableArrowNumbers={this.getAvailableArrowNumbers()} arrowPointsSelectedIndex={this.state.arrowPointsSelectedIndex} handleArrowNumberSelected={this.handleArrowNumberSelected} />}
             </div>

@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import { addPracticeAsync } from '../../actions/practices'
-import { getUnixUtcTimeStamp } from '../../helpers/datetime'
+import { getUnixUtcTimeStamp, getDayText } from '../../helpers/datetime'
 
 import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
@@ -33,7 +33,8 @@ class AddPractice extends Component {
     this.props.addPracticeAsync({
       name: this.state.practiceName,
       comment: this.state.practiceComment,
-      practiceDateTimeStamp: getUnixUtcTimeStamp(this.state.practiceDate),
+      day: getDayText(this.state.practiceDate),
+      timeStamp: getUnixUtcTimeStamp(this.state.practiceDate),
       practiceRounds: this.state.practiceRounds,
       totalValue: this.getTotalValue()
     });

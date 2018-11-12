@@ -99,6 +99,7 @@ class EditScoreEnd extends Component {
         };
 
         this.onEndChanged = this.onEndChanged.bind(this);
+        this.onSaveEnd = this.onSaveEnd.bind(this);
     }
 
     componentDidMount() {
@@ -131,44 +132,58 @@ class EditScoreEnd extends Component {
     }
 
     onEndChanged(newEnd) {
-        if (newEnd.length > this.props.round.arrowsPairEnd) {
-            this.setState({ showMessage: true, message: 'Sorry: Everyone would like to score ' + newEnd.length + ' arrows on ' + this.props.round.arrowsPairEnd + ' arrows end.' });
-            return;
-        }
+        // if (newEnd.length > this.props.round.arrowsPairEnd) {
+        //     this.setState({ showMessage: true, message: 'Sorry: Everyone would like to score ' + newEnd.length + ' arrows on ' + this.props.round.arrowsPairEnd + ' arrows end.' });
+        //     return;
+        // }
+        // this.setState({ end: newEnd });
 
-        this.setState({ end: newEnd });
+        newEnd.length > this.props.round.arrowsPairEnd ?
+            this.setState({ showMessage: true, message: `Sorry: Everyone would like to score ${newEnd.length} arrows on ${this.props.round.arrowsPairEnd} arrows end.` })
+            : this.setState({ end: newEnd })
 
+        // if (newEnd.length === this.props.round.arrowsPairEnd) {
+        //     let score = { ...this.props.score };
+        //     let scoreResults = score.results || this.getEmptyResults(this.props.score.tournamentRound.rounds.length, this.props.round.numberOfEnds);
+        //     let scoreResultsEnds = scoreResults[this.props.roundNo] || this.getEmptyEndsResults(this.props.round.numberOfEnds);
+        //     scoreResultsEnds[this.props.endNo] = newEnd;
+        //     scoreResults[this.props.roundNo] = scoreResultsEnds;
+        //     score.results = scoreResults;
 
-        if (newEnd.length === this.props.round.arrowsPairEnd) {
-            let score = { ...this.props.score };
-            let scoreResults = score.results || this.getEmptyResults(this.props.score.tournamentRound.rounds.length, this.props.round.numberOfEnds);
-            let scoreResultsEnds = scoreResults[this.props.roundNo] || this.getEmptyEndsResults(this.props.round.numberOfEnds);
-            scoreResultsEnds[this.props.endNo] = newEnd;
-            scoreResults[this.props.roundNo] = scoreResultsEnds;
-            score.results = scoreResults;
+        //     this.props.updateScoreAsync(this.props.scoreId, score);
+        //     navigateTo(`./scores/${this.props.scoreId}`);
+        // }
+    }
 
-            this.props.updateScoreAsync(this.props.scoreId, score);
-            navigateTo(`./scores/${this.props.scoreId}`);
-        }
+    onSaveEnd() {
+        let score = { ...this.props.score };
+        let scoreResults = score.results || this.getEmptyResults(this.props.score.tournamentRound.rounds.length, this.props.round.numberOfEnds);
+        let scoreResultsEnds = scoreResults[this.props.roundNo] || this.getEmptyEndsResults(this.props.round.numberOfEnds);
+        scoreResultsEnds[this.props.endNo] = this.state.end;
+        scoreResults[this.props.roundNo] = scoreResultsEnds;
+        score.results = scoreResults;
+
+        this.props.updateScoreAsync(this.props.scoreId, score);
+        navigateTo(`./scores/${this.props.scoreId}`);
     }
 
     render() {
         return <div>{({
             OnlyNumbers: (
                 <div className="mainContainer">
-                <SelectByNumbersEndPoints  round={this.props.round} arrowsSet={null} end={this.state.end} onEndChanged={this.onEndChanged} />
+                    <SelectByNumbersEndPoints round={this.props.round} arrowsSet={null} end={this.state.end} onEndChanged={this.onEndChanged} onSaveEnd={this.onSaveEnd} />
                 </div>
             ),
             OnlyNumbersWithArrowNumbers: (
                 <div className="mainContainer">
-                <SelectByNumbersEndPoints className="mainContainer" round={this.props.round} arrowsSet={this.props.arrowsSet} end={this.state.end} onEndChanged={this.onEndChanged} />
+                    <SelectByNumbersEndPoints className="mainContainer" round={this.props.round} arrowsSet={this.props.arrowsSet} end={this.state.end} onEndChanged={this.onEndChanged} onSaveEnd={this.onSaveEnd} />
                 </div>
             ),
             OnFace: (
-                <TargetFace arrowsSet={this.props.arrowsSet} withArrowNumbers={false} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} />
+                <TargetFace arrowsSet={this.props.arrowsSet}  round={this.props.round} withArrowNumbers={false} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} onSaveEnd={this.onSaveEnd} />
             ),
             OnFaceWithArrowNumbers: (
-                <TargetFace arrowsSet={this.props.arrowsSet} withArrowNumbers={true} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} />
+                <TargetFace arrowsSet={this.props.arrowsSet}  round={this.props.round} withArrowNumbers={true} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} onSaveEnd={this.onSaveEnd} />
             ),
             default: (
                 <div>This scoring is in invalid format. Please try to create a new one.</div>

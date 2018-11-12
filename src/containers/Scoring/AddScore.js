@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { loadArrowsAsync, loadBowsAsync } from '../../actions/equipment'
 import { loadTournamentRoundsAsync, addScoreAsync } from '../../actions/scores'
 
-import { getUnixUtcTimeStamp } from '../../helpers/datetime'
+import { getUnixUtcTimeStamp, getDayText } from '../../helpers/datetime'
 import { getMaxTournamentRoundScore, getDefaultLabels } from '../../helpers/points'
 
 import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card'
@@ -81,7 +81,7 @@ class AddScore extends Component {
     let arrowsSet = this.state.allowArrowSetSelection ? this.state.arrowsSet : this.generateDefaultArrowSet();
     let score = {
       name: this.state.scoreName,
-      date: this.state.scoreDate,
+      day: getDayText(this.state.scoreDate),
       timeStamp: getUnixUtcTimeStamp(this.state.scoreDate),
       arrowsSet: arrowsSet,
       tournamentRound: this.state.tournamentRound,
@@ -227,6 +227,7 @@ class AddScore extends Component {
                 floatingLabelText="Type of Scoring"
                 value={this.state.scoringType}
                 onChange={(event, index, value) => this.handleScoringTypeChange(value)}>
+                <MenuItem value={'OnlySummaryScore'} primaryText="Only summary score" />
                 <MenuItem value={'OnlyNumbers'} primaryText="Only numbers" />
                 <MenuItem value={'OnlyNumbersWithArrowNumbers'} primaryText="Only numbers with arrow numbers" />
                 <MenuItem value={'OnFace'} primaryText="On face" />
