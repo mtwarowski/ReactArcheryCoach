@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
 
-import PrivateRoute from '../App/PrivateRoute';
+import { PrivateRoute } from '../App/PrivateRoute';
 
 import DailyIntensities from './DailyIntensities'
 

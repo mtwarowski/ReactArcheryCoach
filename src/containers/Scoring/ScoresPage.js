@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
 
-import PrivateRoute from '../../containers/App/PrivateRoute';
+import { PrivateRoute } from '../../containers/App/PrivateRoute';
 
 import AddScore from './AddScore'
 import EditScore from './EditScore'

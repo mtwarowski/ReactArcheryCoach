@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import PrivateRoute from './PrivateRoute';
+import { PrivateRoute, NonPrivateRoute} from './PrivateRoute';
 
 import Dashboard from './Dashboard';
 import LoginPage from './LoginPage';
@@ -15,10 +15,9 @@ import TargetFace from '../Scoring/TargetFace';
 
 const Main = () => (
     <main>
-        <Switch>
-            {/* <PrivateRoute path='/' component={ScoresPage} /> */}
+        <Switch>            
             <Route exact path='/' component={Dashboard} />
-            <Route path='/Login' component={LoginPage} />
+            <NonPrivateRoute path='/Login' component={LoginPage} />
             <PrivateRoute path='/Practices' component={PracticesPage} />
             <PrivateRoute path='/Scores' component={ScoresPage} />
             <PrivateRoute path='/Bows' component={EquipmentPage} />
