@@ -82,7 +82,6 @@ export default class TargetStage extends React.Component {
             onTouchEnd={this.handleOnTouchEndWithOnScaleChange}
             onDragEnd={(e) => this.props.onOffsetChange({ xOffset: e.target.attrs.x, yOffset: e.target.attrs.y })}
             ref={ref => {
-
                 if (ref) {
                     this.stageRef = ref.getStage();
                     var stage = this.stageRef;

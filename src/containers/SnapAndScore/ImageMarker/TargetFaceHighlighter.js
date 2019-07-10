@@ -4,12 +4,13 @@ import TagPoint from './TagPoint';
 
 export const generateDefaultTagPoints = (width, height, offset) => {
     let offsetValue = offset || 0;
+    let radius = width / 20;
     return {
-        topPoint: { name: 'top', xPos: width / 2, yPos: 0 + offsetValue },
-        leftPoint: { name: 'left', xPos: 0 + offsetValue, yPos: (height / 2) },
-        rightPoint: { name: 'right', xPos: width - offsetValue, yPos: height / 2 },
-        bottomPoint: { name: 'bottom', xPos: width / 2, yPos: height - offsetValue },
-        middlePoint: { name: 'middle', xPos: width / 2, yPos: height / 2 }
+        topPoint: { name: 'top', xPos: width / 2, yPos: 0 + offsetValue, radius: radius },
+        leftPoint: { name: 'left', xPos: 0 + offsetValue, yPos: (height / 2), radius: radius },
+        rightPoint: { name: 'right', xPos: width - offsetValue, yPos: height / 2, radius: radius },
+        bottomPoint: { name: 'bottom', xPos: width / 2, yPos: height - offsetValue, radius: radius },
+        middlePoint: { name: 'middle', xPos: width / 2, yPos: height / 2, radius: radius }
     };
 }
 
@@ -62,31 +63,9 @@ export class TargetFaceHighlighterWithCircle extends React.Component {
     constructor(props) {
         super(props);
 
-        // this.props = {
-        //     topPoint: null,
-        //     leftPoint: null,
-        //     rightPoint: null,
-        //     bottomPoint: null,
-        //     middlePoint: null
-        // };
-
         this.handlePointChanged = this.handlePointChanged.bind(this);
         this.handleMiddlePointChanged = this.handleMiddlePointChanged.bind(this);
     }
-
-    // componentDidMount() {
-    //     if (this.props.imageWidth && this.props.imageHeight) {
-    //         let tagPoints = generateDefaultTagPoints(this.props.imageWidth, this.props.imageHeight, this.props.imageWidth * 0.1);
-    //         this.setStateForTagPoints(tagPoints);
-    //     }
-    // }
-
-    // componentDidUpdate(prevProps, prevState) {
-    //     if (prevProps.imageWidth !== this.props.imageWidth || prevProps.imageHeight !== this.props.imageHeight) {
-    //         let tagPoints = generateDefaultTagPoints(this.props.imageWidth, this.props.imageHeight, this.props.imageWidth * 0.1);
-    //         this.setStateForTagPoints(tagPoints);
-    //     }
-    // }
 
     setStateForTagPoints(tagPoints) {
         let intersected = getIntersect(tagPoints.topPoint, tagPoints.bottomPoint, tagPoints.leftPoint, tagPoints.rightPoint);

@@ -7,6 +7,7 @@ import DailyIntensities from './DailyIntensities'
 
 const IntensitiesPage = () => (
     <Switch>
+      <PrivateRoute exact path='/Intensities/' component={DailyIntensities} />
       <PrivateRoute exact path='/Intensities/:date' component={DailyIntensities} />
     </Switch>
 )

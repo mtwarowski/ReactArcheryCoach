@@ -48,7 +48,7 @@ export const loadScoreByIdAsync = (id) => {
             ON_REQUESTED_TYPE: GET_SCOREDETAILS_REQUESTED, 
             ON_LOADED_TYPE: GET_SCOREDETAILS_LOADED, 
             ON_ERROR_TYPE: GET_SCOREDETAILS_ERROR
-        }        
+        }
     );
 }
 
@@ -58,7 +58,7 @@ export const loadScoreByDateAsync = (date) => {
             ON_REQUESTED_TYPE: GET_SCOREDETAILS_BYDATE_REQUESTED, 
             ON_LOADED_TYPE: GET_SCOREDETAILS_BYDATE_LOADED, 
             ON_ERROR_TYPE: GET_SCOREDETAILS_BYDATE_ERROR
-        }        
+        }
     );
 }
 

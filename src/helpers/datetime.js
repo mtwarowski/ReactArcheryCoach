@@ -14,3 +14,5 @@ export const getUnixUtcTimeStamp = (date) => {
 
     return `${yyyy}-${mm}-${dd}`;
  }
+ 
+ export const dayTextToDate = (dayText) => new Date(dayText);

@@ -1,7 +1,6 @@
 import { database } from '../Auth/firebase.js'
 import { getUserId } from '../Auth/AuthService'
 import { mapFirebaseObjectToArray } from '../helpers/dataMapping'
-import { getDayText } from '../helpers/datetime'
 
 const GetAllTournamentRounds = () => {
     return database.ref('tournamentRounds').once('value');
@@ -12,7 +11,13 @@ const GetScore = (id) => {
 }
 
 const GetScoreByDay = (day) => {
-    return database.ref('userData/' + getUserId() + '/scores').orderByChild('day').equalTo(day).once('value');
+    return database.ref('userData/' + getUserId() + '/scores').orderByChild('day').equalTo(day).once('value')
+        .then((data) => {
+            return Promise.resolve({
+                    val: () =>  mapFirebaseObjectToArray(data.val())
+                });
+            }
+        );
 }
 
 const GetAllScore = () => {

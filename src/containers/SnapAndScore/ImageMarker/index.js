@@ -19,7 +19,38 @@ class ImageMarker extends Component {
       targetPoints: {},
       arrowPoints: [],
 
-      steps: ['uploadPhoto', 'highlightTargetFace', 'tagArrowPoints', 'confirmSelectedValues', 'saveEverything'],
+      currentStepSettings: {
+        moveTargetFaceSelection: false,
+        seeTargetFaceSelection: false,
+        moveTargetPoints: false,
+        seeTargetPoints: false
+      },
+      stepsSettings: { 
+        highlightTargetFace: {
+          moveTargetFaceSelection: true,
+          seeTargetFaceSelection: true,
+          moveTargetPoints: false,
+          seeTargetPoints: false
+        }, 
+        tagArrowPoints: {
+          moveTargetFaceSelection: false,
+          seeTargetFaceSelection: false,
+          moveTargetPoints: true,
+          seeTargetPoints: true
+        }, 
+        confirmSelectedValues: {
+          moveTargetFaceSelection: false,
+          seeTargetFaceSelection: true,
+          moveTargetPoints: false,
+          seeTargetPoints: true          
+        }, 
+        saveEverything: {
+          moveTargetFaceSelection: false,
+          seeTargetFaceSelection: true,
+          moveTargetPoints: false,
+          seeTargetPoints: true
+        }
+      }
     };
 
     this.resize = this.resize.bind(this);
@@ -60,7 +91,7 @@ class ImageMarker extends Component {
     let newY = (event.layerY - this.state.yOffset) / this.state.scale.y;
 
     let newArrowPoints = this.state.arrowPoints.slice(0);
-    newArrowPoints.push({ xPos: newX, yPos: newY });
+    newArrowPoints.push({ xPos: newX, yPos: newY, radius: this.state.width * 0.2 });
 
     this.setState({ arrowPoints: newArrowPoints });
     console.log(JSON.stringify(event));
@@ -74,9 +105,10 @@ class ImageMarker extends Component {
       file: imagePickerState.file,
       image: imagePickerState.image,
       imageName: imagePickerState.file.name,
-      windowImage: newWindowImage
+      windowImage: newWindowImage,
     });
   }
+
 
   handleArrowPointChanged(point, index) {
     let newPoints = this.state.arrowPoints.slice(0);
@@ -91,19 +123,23 @@ class ImageMarker extends Component {
           onOffsetChange={(e) => this.setState({ xOffset: e.xOffset, yOffset: e.yOffset })}>
           {<Layer ref={ref => this.imageLayerNode = ref}>
             <Group><Image image={this.state.windowImage} onClick={this.handleImageClicked} y={0} x={0} /></Group>
-            <TargetFaceHighlighterWithCircle topPoint={this.state.targetPoints.topPoint}
+            <Group>{this.state.arrowPoints.map((arrowPoint, index) => <TagPoint key={index} 
+                                                                                point={arrowPoint} 
+                                                                                handlePointChanged={(p) => this.handleArrowPointChanged(p, index)} />)}
+            </Group>
+            {this.state.confirmSelectedValues.seeTargetPoints && <TargetFaceHighlighterWithCircle topPoint={this.state.targetPoints.topPoint}
               leftPoint={this.state.targetPoints.leftPoint}
               rightPoint={this.state.targetPoints.rightPoint}
               bottomPoint={this.state.targetPoints.bottomPoint}
               middlePoint={this.state.targetPoints.middlePoint}
               imageWidth={this.state.imageWidth} imageHeight={this.state.imageHeight}
-              onTargetPointsChanged={newTargetPoints => this.setState({ targetPoints: newTargetPoints })} />
-            <Group>{this.state.arrowPoints.map((arrowPoint, index) => <TagPoint key={index} point={arrowPoint} handlePointChanged={(p) => this.handleArrowPointChanged(p, index)} />)}</Group>
+              onTargetPointsChanged={newTargetPoints => this.setState({ targetPoints: newTargetPoints })} /> 
+              }
           </Layer>
           }
         </TargetStage>
       : <ImagePickerGraphical handleImageDataSelected={this.handleOnImageSelected} />
-    );
+    );    
   }
 }
 export default ImageMarker;
