@@ -200,6 +200,7 @@ export class TargetFace extends Component {
                     top: ((window.innerHeight + 60) / 2) - 6,
                     borderRadius: '50%',
                 }}></div>
+                
             </div>
             : 'Select target that you want to shoot.'
         );
