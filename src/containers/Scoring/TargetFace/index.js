@@ -190,6 +190,16 @@ export class TargetFace extends Component {
                 <TargetFaceControlBar scaleStage={this.scaleStage} handleAddNewArrowPoint={this.handleAddNewArrowPoint} scale={this.state.scale} handleSaveButtonPress={this.props.onSaveEnd} showSaveButton={this.props.end.length === this.props.round.arrowsPairEnd} />
                 <ArrowPointBar points={this.props.end} onArrowPointSelected={this.handleArrowPointBarSelected} onArrowPointRemove={this.handleArrowPointBarRemove} />
                 {this.props.withArrowNumbers && <ArrowNumberSelectorBar availableArrowNumbers={this.getAvailableArrowNumbers()} arrowPointsSelectedIndex={this.state.arrowPointsSelectedIndex} handleArrowNumberSelected={this.handleArrowNumberSelected} />}
+                <div style={{
+                    width: 6,
+                    height: 6,
+                    border: '3px solid #000',
+                    background: '#CCC',
+                    position: 'absolute',
+                    left: (window.innerWidth / 2) - 6,
+                    top: ((window.innerHeight + 60) / 2) - 6,
+                    borderRadius: '50%',
+                }}></div>
             </div>
             : 'Select target that you want to shoot.'
         );
