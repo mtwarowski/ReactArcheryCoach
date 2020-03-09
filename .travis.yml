@@ -5,7 +5,7 @@ cache:
   directories:
   - node_modules
 before_install:
-  - npm install -g firebase-tools@1.9.8
+  - npm install -g firebase-tools@5.0.0
   - npm install
 script:
   - npm test
