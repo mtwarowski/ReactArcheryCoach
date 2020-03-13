@@ -54,4 +54,14 @@ const Update = (id, score) => {
     return database.ref(`userData/${getUserId()}/scores/${id}/`).set(score);
 }
 
-export default { GetAllTournamentRounds, Create, GetScore, GetAllScore, Update, GetPage, GetScoreByDay };
+const Delete = (id) => {
+    return database.ref(`userData/${getUserId()}/scores/${id}`).remove().then(() => {
+        return Promise.resolve({
+            val: () => {
+                return { scoreId: id };
+            }
+        });
+    });
+}
+
+export default { GetAllTournamentRounds, Create, GetScore, GetAllScore, Update, Delete, GetPage, GetScoreByDay };

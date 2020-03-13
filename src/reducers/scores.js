@@ -49,7 +49,30 @@ const scores = (state = initialState, action) => {
                 error: action.error,
                 isSaving: false
             }
+            
+        case scoresActions.DELETE_SCORES_REQUESTED:
+            return {
+                ...state,
+                isLoading: true
+            }
 
+
+        case scoresActions.DELETE_SCORES_LOADED:
+            return {
+                ...state,
+                page: filterOutOfId(state.page, action.data.scoreId),
+                isLoading: false
+            }
+
+        case scoresActions.DELETE_SCORES_ERROR:
+            return {
+                ...state,
+                error: action.error,
+                page: {},
+                isLoading: false
+            }
+
+            
         case scoresActions.GET_SCOREDETAILS_REQUESTED:
             return {
                 ...state,
@@ -97,6 +120,14 @@ const scores = (state = initialState, action) => {
         default:
             return state
     }
+}
+
+const filterOutOfId = (page, id) => {
+    if (!page || !page.data) {
+        return page;
+    }
+
+    return { ...page, data: page.data.filter((p) => p.id !== id) };
 }
 
 export default scores;

@@ -10,9 +10,6 @@ const GetPage = (pageNumber, pageSize) => {
 
         let at = (pageSize * pageNumber) - pageSize + 1;
 
-
-
-
         return database.ref('userData/' + getUserId() + '/practices').orderByChild("timeStamp").startAt(at).limitToFirst(pageSize).once('value')
         .then((data) => {
             return Promise.resolve({

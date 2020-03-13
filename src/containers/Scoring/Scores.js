@@ -4,7 +4,7 @@ import PaginationBar from '../../components/PaginationBar.js'
 import { Link } from 'react-router-dom';
 import LinkFloatingActionButton from '../../components/Layout/LinkFloatingActionButton'
 
-import { loadScoresPageAsync } from '../../actions/scores'
+import { loadScoresPageAsync, deleteScoreByIdAsync } from '../../actions/scores'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -49,14 +49,9 @@ class Scores extends Component {
     });
   }
 
-  handleDeleteScoreById(scoreId) {
-
-  }
-
   render() {
     return (
       <div className="mainContainer">
-
         <LoadingIndicator isLoading={this.props.isLoading}>
           <PaginationBar pageNumber={this.props.pageNumber} pageSize={this.props.pageSize} itemCount={this.props.itemCount} handleSelectedPageChanged={this.handleSelectedPageChanged} />
 
@@ -78,7 +73,7 @@ class Scores extends Component {
                       <Link to={'/scores/' + score.id} >
                         <IconButton><Edit /></IconButton>
                       </Link>
-                      <IconButton onClick={() => this.handleDeleteScoreById(score.id)}><Delete /></IconButton>
+                      <IconButton onClick={() => this.props.deleteScoreByIdAsync(score.id)}><Delete /></IconButton>
                     </CardActions>
                   </Card>
                 </div>
@@ -107,6 +102,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   loadScoresPageAsync,
+  deleteScoreByIdAsync
 }, dispatch)
 
 export default connect(

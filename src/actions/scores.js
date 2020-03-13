@@ -23,6 +23,10 @@ export const UPDATE_SCORES_REQUESTED = 'SCORES/UPDATE_REQUESTED'
 export const UPDATE_SCORES_LOADED = 'SCORES/UPDATE_LOADED'
 export const UPDATE_SCORES_ERROR = 'SCORES/UPDATE_ERROR'
 
+export const DELETE_SCORES_REQUESTED = 'SCORES/DELETE_REQUESTED'
+export const DELETE_SCORES_LOADED = 'SCORES/DELETE_LOADED'
+export const DELETE_SCORES_ERROR = 'SCORES/DELETE_ERROR'
+
 export const GETALL_SCORES_REQUESTED = 'SCORES/GETALL_REQUESTED'
 export const GETALL_SCORES_LOADED = 'SCORES/GETALL_LOADED'
 export const GETALL_SCORES_ERROR = 'SCORES/GETALL_ERROR'
@@ -93,6 +97,16 @@ export const updateScoreAsync = (id, score) => {
             ON_REQUESTED_TYPE: UPDATE_SCORES_REQUESTED, 
             ON_LOADED_TYPE: UPDATE_SCORES_LOADED,
             ON_ERROR_TYPE: UPDATE_SCORES_ERROR
+        }
+    );
+}
+
+export const deleteScoreByIdAsync = (id) => {
+    return dispatchFirebaseAsync(() => scoresApi.Delete(id),
+        {
+            ON_REQUESTED_TYPE: DELETE_SCORES_REQUESTED, 
+            ON_LOADED_TYPE: DELETE_SCORES_LOADED, 
+            ON_ERROR_TYPE: DELETE_SCORES_ERROR
         }
     );
 }
