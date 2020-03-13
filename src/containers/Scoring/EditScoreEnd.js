@@ -83,7 +83,7 @@ class SelectByNumbersEndPoints extends Component {
                 </RaisedButton>
                 )}
             </div>
-            <ArrowNumberSelectorBar availableArrowNumbers={this.state.availableArrowNumbers} arrowPointsSelectedIndex={this.state.arrowPointsSelected} handleArrowNumberSelected={this.handleArrowNumberSelected} />
+            <ArrowNumberSelectorBar availableArrowNumbers={this.state.availableArrowNumbers} handleArrowNumberSelected={this.handleArrowNumberSelected} />
         </div>
     }
 }
@@ -180,10 +180,10 @@ class EditScoreEnd extends Component {
                 </div>
             ),
             OnFace: (
-                <TargetFace arrowsSet={this.props.arrowsSet}  round={this.props.round} withArrowNumbers={false} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} onSaveEnd={this.onSaveEnd} />
+                <TargetFace arrowsSet={this.props.arrowsSet} round={this.props.round} withArrowNumbers={false} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} onSaveEnd={this.onSaveEnd} />
             ),
             OnFaceWithArrowNumbers: (
-                <TargetFace arrowsSet={this.props.arrowsSet}  round={this.props.round} withArrowNumbers={true} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} onSaveEnd={this.onSaveEnd} />
+                <TargetFace arrowsSet={this.props.arrowsSet} round={this.props.round} withArrowNumbers={true} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} onSaveEnd={this.onSaveEnd} />
             ),
             default: (
                 <div>This scoring is in invalid format. Please try to create a new one.</div>

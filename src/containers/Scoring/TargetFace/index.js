@@ -15,7 +15,7 @@ export class TargetFace extends Component {
         super(props);
         this.state = {
             width: 0, height: 0, scale: { x: 1, y: 1 }, xOffset: 0, yOffset: 0,
-            arrowPointsSelectedIndex: null
+            selectedArrowPoint: null
         };
 
         this.scaleStage = this.scaleStage.bind(this);
@@ -90,6 +90,9 @@ export class TargetFace extends Component {
 
         let newEnd = this.props.end.slice(0);
         newEnd.push(getArrowPointWithValues(this.props.targetFace, newArrowPoint));
+        this.setState({
+            selectedArrowPoint: newArrowPoint
+        });
         this.props.onEndChanged(newEnd);
     }
 
@@ -129,17 +132,35 @@ export class TargetFace extends Component {
         let newEnd = this.props.end.slice(0);
         newEnd[index] = getArrowPointWithValues(this.props.targetFace, point);
         this.setState({
-            arrowPointsSelectedIndex: point.isEditMode ? null : index
+            selectedArrowPoint: point.isEditMode ? null : newEnd[index]
         }, () => this.props.onEndChanged(newEnd));
     }
 
     handleArrowNumberSelected(arrowNo) {
-        if (!this.state.arrowPointsSelectedIndex && this.state.arrowPointsSelectedIndex !== 0) {
+        if (!this.state.selectedArrowPoint) {
             return;
         }
+
+        var indexNo = -1;
+        for (let idx = this.props.end.length - 1; idx >= 0; idx--) {
+            var i = this.props.end[idx];
+            if (i.xPos === this.state.selectedArrowPoint.xPos && i.yPos === this.state.selectedArrowPoint.yPos) {
+                indexNo = idx;
+                break;
+            }
+        }
+
+        if (indexNo < 0) {
+            return;
+        }
+
         let newEnd = this.props.end.slice(0);
-        newEnd[this.state.arrowPointsSelectedIndex] = { ...newEnd[this.state.arrowPointsSelectedIndex], arrowNo };
-        this.setState({ arrowPointsSelectedIndex: null }, () => this.props.onEndChanged(newEnd));
+        if(arrowNo){
+            newEnd[indexNo] = { ...newEnd[indexNo], arrowNo };
+        }
+        this.setState({
+            selectedArrowPoint: null
+        }, () => this.props.onEndChanged(newEnd));
     }
 
     orderTargetRingsByRadius(targetRings) {
@@ -189,7 +210,7 @@ export class TargetFace extends Component {
                 </TargetStage>
                 <TargetFaceControlBar scaleStage={this.scaleStage} handleAddNewArrowPoint={this.handleAddNewArrowPoint} scale={this.state.scale} handleSaveButtonPress={this.props.onSaveEnd} showSaveButton={this.props.end.length === this.props.round.arrowsPairEnd} />
                 <ArrowPointBar points={this.props.end} onArrowPointSelected={this.handleArrowPointBarSelected} onArrowPointRemove={this.handleArrowPointBarRemove} />
-                {this.props.withArrowNumbers && <ArrowNumberSelectorBar availableArrowNumbers={this.getAvailableArrowNumbers()} arrowPointsSelectedIndex={this.state.arrowPointsSelectedIndex} handleArrowNumberSelected={this.handleArrowNumberSelected} />}
+                {this.props.withArrowNumbers && this.state.selectedArrowPoint && <ArrowNumberSelectorBar availableArrowNumbers={this.getAvailableArrowNumbers()} handleArrowNumberSelected={this.handleArrowNumberSelected} />}
                 <div style={{
                     width: 6,
                     height: 6,
@@ -200,7 +221,7 @@ export class TargetFace extends Component {
                     top: ((window.innerHeight + 60) / 2) - 6,
                     borderRadius: '50%',
                 }}></div>
-                
+
             </div>
             : 'Select target that you want to shoot.'
         );

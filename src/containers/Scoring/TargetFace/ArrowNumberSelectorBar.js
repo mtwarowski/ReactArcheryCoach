@@ -18,17 +18,15 @@ const arrowNumberSelectorBarStyles = {
     position: 'fixed'
 }
 
-const ArrowNumberSelectorBar = ({ availableArrowNumbers, arrowPointsSelectedIndex, handleArrowNumberSelected }) => {
-    return (
-        (arrowPointsSelectedIndex || arrowPointsSelectedIndex === 0) &&
-            <div style={arrowNumberSelectorBarStyles}>
-                <Paper style={paperStyles}>
-                    <Menu desktop={true}>
-                        {availableArrowNumbers && availableArrowNumbers.map(x => <MenuItem key={x} onClick={() => handleArrowNumberSelected(x)} primaryText={'Arrow No: ' + x} />)}
-                        <Divider />
-                        <MenuItem onClick={() => handleArrowNumberSelected(null)} primaryText={'Cancel'} />
-                    </Menu>
-                </Paper>
-            </div>);
+const ArrowNumberSelectorBar = ({ availableArrowNumbers, handleArrowNumberSelected }) => {
+    return (<div style={arrowNumberSelectorBarStyles}>
+        <Paper style={paperStyles}>
+            <Menu desktop={true}>
+                {availableArrowNumbers && availableArrowNumbers.map(x => <MenuItem key={x} onClick={() => handleArrowNumberSelected(x)} primaryText={'Arrow No: ' + x} />)}
+                <Divider />
+                <MenuItem onClick={() => handleArrowNumberSelected(null)} primaryText={'Cancel'} />
+            </Menu>
+        </Paper>
+    </div>);
 }
 export default ArrowNumberSelectorBar;
