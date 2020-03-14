@@ -35,7 +35,6 @@ class Scores extends Component {
     super(props);
 
     this.handleSelectedPageChanged = this.handleSelectedPageChanged.bind(this);
-    this.handleDeleteScoreById = this.handleDeleteScoreById.bind(this);
   }
 
   componentDidMount() {
