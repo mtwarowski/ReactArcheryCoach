@@ -3,8 +3,10 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { TargetFace } from './TargetFace'
+import Sight from './TargetFace/Sight'
 import { updateScoreAsync, loadScoreByIdAsync } from '../../actions/scores'
 import ArrowNumberSelectorBar from './TargetFace/ArrowNumberSelectorBar'
+import ArrowPointBar from './TargetFace/ArrowPointBar'
 import EndPoint from './TargetFace/EndPoint'
 
 import RaisedButton from 'material-ui/RaisedButton'
@@ -93,11 +95,13 @@ class EditScoreEnd extends Component {
         super(props);
 
         this.state = {
+            selectedArrowPoint: null,
             end: [],
             showMessage: false,
             message: ''
         };
 
+        this.handleArrowNumberSelected = this.handleArrowNumberSelected.bind(this);
         this.onEndChanged = this.onEndChanged.bind(this);
         this.onSaveEnd = this.onSaveEnd.bind(this);
     }
@@ -131,28 +135,51 @@ class EditScoreEnd extends Component {
         return results;
     }
 
+    handleArrowNumberSelected(arrowNo) {
+        if (!this.state.selectedArrowPoint) {
+            return;
+        }
+
+        var indexNo = -1;
+        for (let idx = this.state.end.length - 1; idx >= 0; idx--) {
+            var i = this.state.end[idx];
+            if (i.xPos === this.state.selectedArrowPoint.xPos && i.yPos === this.state.selectedArrowPoint.yPos) {
+                indexNo = idx;
+                break;
+            }
+        }
+
+        if (indexNo < 0) {
+            return;
+        }
+
+        let newEnd = this.state.end.slice(0);
+        if(arrowNo){
+            newEnd[indexNo] = { ...newEnd[indexNo], arrowNo };
+        }
+        this.setState({
+            selectedArrowPoint: null
+        }, this.onEndChanged(newEnd));
+    }
+
     onEndChanged(newEnd) {
-        // if (newEnd.length > this.props.round.arrowsPairEnd) {
-        //     this.setState({ showMessage: true, message: 'Sorry: Everyone would like to score ' + newEnd.length + ' arrows on ' + this.props.round.arrowsPairEnd + ' arrows end.' });
-        //     return;
-        // }
-        // this.setState({ end: newEnd });
+        this.onSelectedArrowPoint(newEnd);
 
         newEnd.length > this.props.round.arrowsPairEnd ?
-            this.setState({ showMessage: true, message: `Sorry: Everyone would like to score ${newEnd.length} arrows on ${this.props.round.arrowsPairEnd} arrows end.` })
+            this.setState({ showMessage: true, message: `Sorry: Everyone would like to score ${newEnd.length+1} arrows on ${this.props.round.arrowsPairEnd+1} arrows end.` })
             : this.setState({ end: newEnd })
+    }
 
-        // if (newEnd.length === this.props.round.arrowsPairEnd) {
-        //     let score = { ...this.props.score };
-        //     let scoreResults = score.results || this.getEmptyResults(this.props.score.tournamentRound.rounds.length, this.props.round.numberOfEnds);
-        //     let scoreResultsEnds = scoreResults[this.props.roundNo] || this.getEmptyEndsResults(this.props.round.numberOfEnds);
-        //     scoreResultsEnds[this.props.endNo] = newEnd;
-        //     scoreResults[this.props.roundNo] = scoreResultsEnds;
-        //     score.results = scoreResults;
+    onSelectedArrowPoint(newEnd) {
+        if(this.state.end.length >= newEnd.length){
+            return;
+        }
 
-        //     this.props.updateScoreAsync(this.props.scoreId, score);
-        //     navigateTo(`./scores/${this.props.scoreId}`);
-        // }
+        let newArrowPoint = newEnd.filter(x => !this.state.end.includes(x));
+
+        this.setState({
+            selectedArrowPoint: newArrowPoint[0]
+        });
     }
 
     onSaveEnd() {
@@ -180,10 +207,28 @@ class EditScoreEnd extends Component {
                 </div>
             ),
             OnFace: (
-                <TargetFace arrowsSet={this.props.arrowsSet} round={this.props.round} withArrowNumbers={false} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} onSaveEnd={this.onSaveEnd} />
+                <TargetFace arrowsSet={this.props.arrowsSet} round={this.props.round} withArrowNumbers={false} targetFace={this.props.targetFace} arrowPoints={this.state.end} onArrowPointsChanged={this.onEndChanged} onSaveArrowPoints={this.onSaveEnd} >
+                    <Sight />
+                    <ArrowPointBar points={this.state.end} onArrowPointsChanged={this.onEndChanged} />
+                </TargetFace>
             ),
             OnFaceWithArrowNumbers: (
-                <TargetFace arrowsSet={this.props.arrowsSet} round={this.props.round} withArrowNumbers={true} targetFace={this.props.targetFace} end={this.state.end} onEndChanged={this.onEndChanged} onSaveEnd={this.onSaveEnd} />
+                    this.state.selectedArrowPoint ? <ArrowNumberSelectorBar 
+                        arrowsSet={this.props.arrowsSet} 
+                        selectedArrowPoints={this.state.end} 
+                        handleArrowNumberSelected={this.handleArrowNumberSelected}
+                    /> 
+                : 
+                <TargetFace 
+                    arrowsSet={this.props.arrowsSet} 
+                    round={this.props.round} 
+                    targetFace={this.props.targetFace} 
+                    arrowPoints={this.state.end} 
+                    onArrowPointsChanged={this.onEndChanged} 
+                    onSaveArrowPoints={this.onSaveEnd} >
+                    <Sight />
+                    <ArrowPointBar points={this.state.end} onArrowPointsChanged={this.onEndChanged} />
+                </TargetFace>
             ),
             default: (
                 <div>This scoring is in invalid format. Please try to create a new one.</div>

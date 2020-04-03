@@ -34,7 +34,33 @@ export default class ArrowPointBar extends React.Component {
         this.state = {
             isOpened: false
         };
+
+        this.onArrowPointSelected = this.onArrowPointSelected.bind(this);
+        this.onArrowPointRemove = this.onArrowPointRemove.bind(this);
     }
+    
+    onArrowPointSelected(point){
+        var newArrowPoints = this.handleArrowPointBarSelected(point, this.props.points);
+        this.props.onArrowPointsChanged(newArrowPoints);
+    }
+    
+    onArrowPointRemove(point){
+        var newArrowPoints = this.handleArrowPointBarRemove(point, this.props.points);
+        this.props.onArrowPointsChanged(newArrowPoints);
+    }
+
+    handleArrowPointBarSelected(point, arrowPoints){
+        let newArrowPoints = arrowPoints.slice(0);
+        point.isEditMode = !point.isEditMode;
+        return newArrowPoints;
+    }
+
+    handleArrowPointBarRemove(point, arrowPoints) {
+        let newArrowPoints = arrowPoints.slice(0);
+        newArrowPoints = newArrowPoints.filter(x => x !== point);
+        return newArrowPoints;
+    }
+
     render() {
         const orderedPointFromHighestToLowest = sortByValue(this.props.points);
 
@@ -42,8 +68,8 @@ export default class ArrowPointBar extends React.Component {
             <div style={styles.arrowPointBarContainer}>
                 {this.state.isOpened &&
                     <Paper style={styles.arrowPointPresenterContainer} >
-                        {orderedPointFromHighestToLowest.map((arrowPoint, idx) => <EndPoint key={idx} point={arrowPoint} onArrowPointSelected={this.props.onArrowPointSelected}  />)}
-                        {orderedPointFromHighestToLowest && orderedPointFromHighestToLowest.length > 0 && <Avatar onClick={() => this.props.onArrowPointRemove(orderedPointFromHighestToLowest[orderedPointFromHighestToLowest.length-1])}
+                        {orderedPointFromHighestToLowest.map((arrowPoint, idx) => <EndPoint key={idx} point={arrowPoint} onArrowPointSelected={this.onArrowPointSelected}  />)}
+                        {orderedPointFromHighestToLowest && orderedPointFromHighestToLowest.length > 0 && <Avatar onClick={() => this.onArrowPointRemove(orderedPointFromHighestToLowest[orderedPointFromHighestToLowest.length-1])}
                             backgroundColor={'white'} color={'DarkGrey'} style={{border: '2px solid DarkGrey'}} icon={<Backspace />}></Avatar>}
                     </Paper>
                 }
