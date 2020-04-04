@@ -14,5 +14,4 @@ const style = {
 export const Sight = () =>  {
     return <div style={style}></div>
 }
-
 export default Sight;
